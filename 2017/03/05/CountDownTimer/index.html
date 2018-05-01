@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Android 倒计时CountDownTimer的使用和封装及改进</title>
+    <meta name="description" content="  （一）介绍  （二）使用  （三）封装  （四）改进          源码地址      （一）介绍  官方文档。CountDownTimer是一个倒计时的类，还可以指定时间间隔定期通知，举个栗子，比如说你倒计时是100秒的，可以指定每20秒通知一次，这样开始的时候会回调一次，20秒时会回调一次，40秒时会...">
+
+    <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://at.alicdn.com/t/font_8v3czwksspqlg14i.css">
+    <link rel="stylesheet" href="/css/main.css ">
+    <link rel="canonical" href="http://localhost:4001/2017/03/05/CountDownTimer/">
+    <link rel="alternate" type="application/rss+xml" title="cekiasoo 的 blog" href="http://localhost:4001/feed.xml ">
+
+
+    <script>
+    // 百度统计代码
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?44057784c9cb1a12f1f7fcb6ae5c0237";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+
+
+</head>
+
+
+  <body>
+
+    <header id="top">
+    <div class="wrapper">
+        <a href="/" class="brand">cekiasoo 的 blog</a>
+        <small>Android Coder</small>
+        <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
+        <nav id="headerNav">
+            <ul>
+                <li>
+                    
+                    <a href="/">
+                    
+                        <i class="fa fa-home"></i>Home
+                    </a>
+                </li>
+
+                
+                    
+                    <li>
+                        
+                        <a href="/archive/">
+                        
+                            <i class="fa fa-archive"></i>Archives
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/category/">
+                        
+                            <i class="fa fa-th-list"></i>Categories
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/tag/">
+                        
+                            <i class="fa fa-tags"></i>Tags
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/about/">
+                        
+                            <i class="fa fa-heart"></i>About
+                        </a>
+                    </li>
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+        <div class="page clearfix" post>
+    <div class="left">
+        <h1>Android 倒计时CountDownTimer的使用和封装及改进</h1>
+        <div class="label">
+
+            <div class="label-card">
+                <i class="fa fa-calendar"></i>2017-03-05
+            </div>
+
+            <div class="label-card">
+                <i class="fa fa-user"></i>cekiasoo
+                
+            </div>
+            <div class="label-card">
+                <p>阅读：<span id="busuanzi_value_page_pv"></span></p>
+            </div>
+            <div class="label-card">
+                
+            </div>
+
+            <div class="label-card">
+            
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#Android" title="Category: Android" rel="category">Android</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+            </div>
+
+            <div class="label-card">
+            
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <!--a href="/tag/#Android" title="Tag: Android" rel="tag">Android</a-->
+        <a href="/tag/#Android" title="Tag: Android" rel="tag">Android</a>&nbsp;
+    
+        <!--a href="/tag/#CountDownTimer" title="Tag: CountDownTimer" rel="tag">CountDownTimer</a-->
+        <a href="/tag/#CountDownTimer" title="Tag: CountDownTimer" rel="tag">CountDownTimer</a>
+    
+  
+
+</span>
+
+            </div>
+
+        </div>
+        <hr>
+        <article itemscope itemtype="http://schema.org/BlogPosting">
+        <ul id="markdown-toc">
+  <li><a href="#一介绍" id="markdown-toc-一介绍">（一）介绍</a></li>
+  <li><a href="#二使用" id="markdown-toc-二使用">（二）使用</a></li>
+  <li><a href="#三封装" id="markdown-toc-三封装">（三）封装</a></li>
+  <li><a href="#四改进" id="markdown-toc-四改进">（四）改进</a>    <ul>
+      <li><a href="#源码地址" id="markdown-toc-源码地址"><a href="https://github.com/cekiasoo/CountDownTimerTest">源码地址</a></a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="一介绍">（一）介绍</h2>
+<blockquote>
+  <p><a href="https://developer.android.google.cn/reference/android/os/CountDownTimer.html">官方文档。</a>CountDownTimer是一个倒计时的类，还可以指定时间间隔定期通知，举个栗子，比如说你倒计时是100秒的，可以指定每20秒通知一次，这样开始的时候会回调一次，20秒时会回调一次，40秒时会回调一次…，200秒时的回调和时间间隔的回调不同方法的。</p>
+</blockquote>
+
+<h2 id="二使用">（二）使用</h2>
+<blockquote>
+  <p>CountDownTimer只有一个构造，</p>
+  <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+     * @param millisInFuture The number of millis in the future from the call
+     *   to {@link #start()} until the countdown is done and {@link #onFinish()}
+     *   is called.
+     * @param countDownInterval The interval along the way to receive
+     *   {@link #onTick(long)} callbacks.
+     */</span>
+     <span class="kd">public</span> <span class="nf">CountDownTimer</span><span class="o">(</span><span class="kt">long</span> <span class="n">millisInFuture</span><span class="o">,</span> <span class="kt">long</span> <span class="n">countDownInterval</span><span class="o">)</span> <span class="o">{</span>
+         <span class="n">mMillisInFuture</span> <span class="o">=</span> <span class="n">millisInFuture</span><span class="o">;</span>
+         <span class="n">mCountdownInterval</span> <span class="o">=</span> <span class="n">countDownInterval</span><span class="o">;</span>
+     <span class="o">}</span>
+</code></pre>
+  </div>
+  <p>从方法的注释中可以看出，第一个参数是总的倒计时时间，第二个参数是定期的回调时间。  <br />
+使用的时候：</p>
+  <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="k">new</span> <span class="n">CountDownTimer</span><span class="o">(</span><span class="mi">10000</span><span class="o">,</span> <span class="mi">2000</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onTick</span><span class="o">(</span><span class="kt">long</span> <span class="n">millisUntilFinished</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"onTick millisUntilFinished = "</span> <span class="o">+</span> <span class="n">millisUntilFinished</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFinish</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"onFinish"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}.</span><span class="na">start</span><span class="o">();</span>
+</code></pre>
+  </div>
+  <p>onTick()方法是定期间隔回调的方法，onFinish()就是结束时回调的方法了。<br />
+<img src="/images/countdowntimer/QQ截图20170304232151.png" alt="运行结果截图" /><br />
+可以看出在9970毫秒的时候回调了一次onTick()方法，因为消息传递会消耗一点时间，使用传过来时是9976毫秒，后面的也是，这里执行了onTick()方法4次，那剩下2秒的时候不应该还要执行一次么？怎么3964后就不执行onTick()方法了？原因是3964毫秒再经过2秒就剩下1900多毫秒，比2秒小，使用不执行onTick()方法。  <br />
+CountDownTimer的核心代码</p>
+  <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">final</span> <span class="kt">long</span> <span class="n">millisLeft</span> <span class="o">=</span> <span class="n">mStopTimeInFuture</span> <span class="o">-</span> <span class="n">SystemClock</span><span class="o">.</span><span class="na">elapsedRealtime</span><span class="o">();</span>
+<span class="k">if</span> <span class="o">(</span><span class="n">millisLeft</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">onFinish</span><span class="o">();</span>
+<span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">millisLeft</span> <span class="o">&lt;</span> <span class="n">mCountdownInterval</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// no tick, just delay until done</span>
+    <span class="n">sendMessageDelayed</span><span class="o">(</span><span class="n">obtainMessage</span><span class="o">(</span><span class="n">MSG</span><span class="o">),</span> <span class="n">millisLeft</span><span class="o">);</span>
+<span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+    <span class="kt">long</span> <span class="n">lastTickStart</span> <span class="o">=</span> <span class="n">SystemClock</span><span class="o">.</span><span class="na">elapsedRealtime</span><span class="o">();</span>
+    <span class="n">onTick</span><span class="o">(</span><span class="n">millisLeft</span><span class="o">);</span>
+    <span class="kt">long</span> <span class="n">delay</span> <span class="o">=</span> <span class="n">lastTickStart</span> <span class="o">+</span> <span class="n">mCountdownInterval</span> <span class="o">-</span> <span class="n">SystemClock</span><span class="o">.</span><span class="na">elapsedRealtime</span><span class="o">();</span>
+    <span class="k">while</span> <span class="o">(</span><span class="n">delay</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span> <span class="n">delay</span> <span class="o">+=</span> <span class="n">mCountdownInterval</span><span class="o">;</span>
+    <span class="n">sendMessageDelayed</span><span class="o">(</span><span class="n">obtainMessage</span><span class="o">(</span><span class="n">MSG</span><span class="o">),</span> <span class="n">delay</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+  </div>
+  <p>如果倒计时后不让它执行了也可以取消倒计时，调用CountDownTimer的cancel()方法就可以取消倒计时了。</p>
+  <h2 id="三封装">（三）封装</h2>
+  <p>有时候我们并不关心onTick()，只需要关心onFinish()方法的执行，我们可以封装个工具类，把这两个功能分开，想单独用时就单独用，想合起来用时就合起来用。</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">ce</span><span class="o">.</span><span class="na">countdowntimertest</span><span class="o">.</span><span class="na">utils</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">android.os.CountDownTimer</span><span class="o">;</span>
+<span class="cm">/**
+ * 倒计时工具类
+ */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CountDownTimerUtils</span> <span class="o">{</span>
+    <span class="cm">/**
+     * 倒计时结束的回调接口
+     */</span>
+    <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">FinishDelegate</span> <span class="o">{</span>
+        <span class="kt">void</span> <span class="nf">onFinish</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="cm">/**
+     * 定期回调的接口
+     */</span>
+    <span class="kd">public</span> <span class="kd">interface</span> <span class="nc">TickDelegate</span> <span class="o">{</span>
+        <span class="kt">void</span> <span class="nf">onTick</span><span class="o">(</span><span class="kt">long</span> <span class="n">pMillisUntilFinished</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">long</span> <span class="n">ONE_SECOND</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">;</span>
+    <span class="cm">/**
+     * 总倒计时时间
+     */</span>
+    <span class="kd">private</span> <span class="kt">long</span> <span class="n">mMillisInFuture</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+    <span class="cm">/**
+     * 定期回调的时间 必须大于0 否则会出现ANR
+     */</span>
+    <span class="kd">private</span> <span class="kt">long</span> <span class="n">mCountDownInterval</span><span class="o">;</span>
+    <span class="cm">/**
+     * 倒计时结束的回调
+     */</span>
+    <span class="kd">private</span> <span class="n">FinishDelegate</span> <span class="n">mFinishDelegate</span><span class="o">;</span>
+    <span class="cm">/**
+     * 定期回调
+     */</span>
+    <span class="kd">private</span> <span class="n">TickDelegate</span> <span class="n">mTickDelegate</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">MyCountDownTimer</span> <span class="n">mCountDownTimer</span><span class="o">;</span>
+    <span class="cm">/**
+     * 获取 CountDownTimerUtils
+     * @return CountDownTimerUtils
+     */</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">CountDownTimerUtils</span> <span class="nf">getCountDownTimer</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">CountDownTimerUtils</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="cm">/**
+     * 设置定期回调的时间 调用{@link #setTickDelegate(TickDelegate)}
+     * @param pCountDownInterval 定期回调的时间 必须大于0
+     * @return CountDownTimerUtils
+     */</span>
+    <span class="kd">public</span> <span class="n">CountDownTimerUtils</span> <span class="nf">setCountDownInterval</span><span class="o">(</span><span class="kt">long</span> <span class="n">pCountDownInterval</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">mCountDownInterval</span><span class="o">=</span><span class="n">pCountDownInterval</span><span class="o">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="cm">/**
+     * 设置倒计时结束的回调
+     * @param pFinishDelegate 倒计时结束的回调接口
+     * @return CountDownTimerUtils
+     */</span>
+    <span class="kd">public</span> <span class="n">CountDownTimerUtils</span> <span class="nf">setFinishDelegate</span><span class="o">(</span><span class="n">FinishDelegate</span> <span class="n">pFinishDelegate</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">mFinishDelegate</span><span class="o">=</span><span class="n">pFinishDelegate</span><span class="o">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="cm">/**
+     * 设置总倒计时时间
+     * @param pMillisInFuture 总倒计时时间
+     * @return CountDownTimerUtils
+     */</span>
+    <span class="kd">public</span> <span class="n">CountDownTimerUtils</span> <span class="nf">setMillisInFuture</span><span class="o">(</span><span class="kt">long</span> <span class="n">pMillisInFuture</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">mMillisInFuture</span><span class="o">=</span><span class="n">pMillisInFuture</span><span class="o">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="cm">/**
+     * 设置定期回调
+     * @param pTickDelegate 定期回调接口
+     * @return CountDownTimerUtils
+     */</span>
+    <span class="kd">public</span> <span class="n">CountDownTimerUtils</span> <span class="nf">setTickDelegate</span><span class="o">(</span><span class="n">TickDelegate</span> <span class="n">pTickDelegate</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">mTickDelegate</span><span class="o">=</span><span class="n">pTickDelegate</span><span class="o">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">create</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">mCountDownTimer</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">mCountDownTimer</span><span class="o">.</span><span class="na">cancel</span><span class="o">();</span>
+            <span class="n">mCountDownTimer</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">mCountDownInterval</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">mCountDownInterval</span> <span class="o">=</span> <span class="n">mMillisInFuture</span> <span class="o">+</span> <span class="n">ONE_SECOND</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="n">mCountDownTimer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyCountDownTimer</span><span class="o">(</span><span class="n">mMillisInFuture</span><span class="o">,</span> <span class="n">mCountDownInterval</span><span class="o">);</span>
+        <span class="n">mCountDownTimer</span><span class="o">.</span><span class="na">setTickDelegate</span><span class="o">(</span><span class="n">mTickDelegate</span><span class="o">);</span>
+        <span class="n">mCountDownTimer</span><span class="o">.</span><span class="na">setFinishDelegate</span><span class="o">(</span><span class="n">mFinishDelegate</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="cm">/**
+     * 开始倒计时
+     */</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">start</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">mCountDownTimer</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">create</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="n">mCountDownTimer</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="cm">/**
+     * 取消倒计时
+     */</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">cancel</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">mCountDownTimer</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">mCountDownTimer</span><span class="o">.</span><span class="na">cancel</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">MyCountDownTimer</span> <span class="kd">extends</span> <span class="n">CountDownTimer</span> <span class="o">{</span>
+        <span class="kd">private</span> <span class="n">FinishDelegate</span> <span class="n">mFinishDelegate</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="n">TickDelegate</span> <span class="n">mTickDelegate</span><span class="o">;</span>
+        <span class="cm">/**
+         * @param millisInFuture    The number of millis in the future from the call
+         *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
+         *                          is called.
+         * @param countDownInterval The interval along the way to receive
+         *                          {@link #onTick(long)} callbacks.
+         */</span>
+        <span class="kd">public</span> <span class="nf">MyCountDownTimer</span><span class="o">(</span><span class="kt">long</span> <span class="n">millisInFuture</span><span class="o">,</span> <span class="kt">long</span> <span class="n">countDownInterval</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kd">super</span><span class="o">(</span><span class="n">millisInFuture</span><span class="o">,</span> <span class="n">countDownInterval</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onTick</span><span class="o">(</span><span class="kt">long</span> <span class="n">millisUntilFinished</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">mTickDelegate</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">mTickDelegate</span><span class="o">.</span><span class="na">onTick</span><span class="o">(</span><span class="n">millisUntilFinished</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFinish</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">mFinishDelegate</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">mFinishDelegate</span><span class="o">.</span><span class="na">onFinish</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+        <span class="kt">void</span> <span class="nf">setFinishDelegate</span><span class="o">(</span><span class="n">FinishDelegate</span> <span class="n">pFinishDelegate</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">mFinishDelegate</span><span class="o">=</span><span class="n">pFinishDelegate</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="kt">void</span> <span class="nf">setTickDelegate</span><span class="o">(</span><span class="n">TickDelegate</span> <span class="n">pTickDelegate</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">mTickDelegate</span><span class="o">=</span><span class="n">pTickDelegate</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+<p>使用也简单,用getCountDownTimer()方法获取实例；setMillisInFuture()方法是设置总倒计时时间；setFinishDelegate()方法是设置倒计时完成的回调；setCountDownInterval()方法是设置定期回调的时间间隔,但值要大于0，不然会出现ANR的，因为不停的回调会导致Looper消息处理不过来；setTickDelegate()方法是设置定期回调的。
+只需要最终倒计时的使用：</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"Start"</span><span class="o">);</span>
+        <span class="n">CountDownTimerUtils</span><span class="o">.</span><span class="na">getCountDownTimer</span><span class="o">()</span>
+                <span class="o">.</span><span class="na">setMillisInFuture</span><span class="o">(</span><span class="mi">5000</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">setFinishDelegate</span><span class="o">(</span><span class="k">new</span> <span class="n">CountDownTimerUtils</span><span class="o">.</span><span class="na">FinishDelegate</span><span class="o">()</span> <span class="o">{</span>
+                    <span class="nd">@Override</span>
+                    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFinish</span><span class="o">()</span> <span class="o">{</span>
+                        <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"onFinish"</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}).</span><span class="na">start</span><span class="o">();</span>
+</code></pre>
+</div>
+<p><img src="/images/countdowntimer/QQ截图20170305121833.png" alt="运行结果截图" /><br />
+也可以只要定期的间隔回调，不过要设置设置下总倒计时时间：</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"Start"</span><span class="o">);</span>
+        <span class="n">CountDownTimerUtils</span><span class="o">.</span><span class="na">getCountDownTimer</span><span class="o">()</span>
+                <span class="o">.</span><span class="na">setMillisInFuture</span><span class="o">(</span><span class="mi">10000</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">setCountDownInterval</span><span class="o">(</span><span class="mi">2000</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">setTickDelegate</span><span class="o">(</span><span class="k">new</span> <span class="n">CountDownTimerUtils</span><span class="o">.</span><span class="na">TickDelegate</span><span class="o">()</span> <span class="o">{</span>
+                    <span class="nd">@Override</span>
+                    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onTick</span><span class="o">(</span><span class="kt">long</span> <span class="n">pMillisUntilFinished</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"pMillisUntilFinished = "</span> <span class="o">+</span> <span class="n">pMillisUntilFinished</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}).</span><span class="na">start</span><span class="o">();</span>
+</code></pre>
+</div>
+<p><img src="/images/countdowntimer/QQ截图20170305124828.png" alt="运行结果截图" /><br />
+当然也可以两个都有：</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"Start"</span><span class="o">);</span>
+        <span class="n">CountDownTimerUtils</span><span class="o">.</span><span class="na">getCountDownTimer</span><span class="o">()</span>
+                <span class="o">.</span><span class="na">setMillisInFuture</span><span class="o">(</span><span class="mi">10000</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">setCountDownInterval</span><span class="o">(</span><span class="mi">2000</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">setTickDelegate</span><span class="o">(</span><span class="k">new</span> <span class="n">CountDownTimerUtils</span><span class="o">.</span><span class="na">TickDelegate</span><span class="o">()</span> <span class="o">{</span>
+                    <span class="nd">@Override</span>
+                    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onTick</span><span class="o">(</span><span class="kt">long</span> <span class="n">pMillisUntilFinished</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"pMillisUntilFinished = "</span> <span class="o">+</span> <span class="n">pMillisUntilFinished</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">})</span>
+                <span class="o">.</span><span class="na">setFinishDelegate</span><span class="o">(</span><span class="k">new</span> <span class="n">CountDownTimerUtils</span><span class="o">.</span><span class="na">FinishDelegate</span><span class="o">()</span> <span class="o">{</span>
+                    <span class="nd">@Override</span>
+                    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFinish</span><span class="o">()</span> <span class="o">{</span>
+                        <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"onFinish"</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}).</span><span class="na">start</span><span class="o">();</span>      
+</code></pre>
+</div>
+<p><img src="/images/countdowntimer/QQ截图20170305130312.png" alt="运行结果截图" /><br /></p>
+<h2 id="四改进">（四）改进</h2>
+<blockquote>
+  <p>虽然CountDownTimer很好用，但有个缺点，就是只能在主线程中运行，如果在子线程中运行就会报错，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="k">new</span> <span class="n">Thread</span><span class="o">(</span><span class="k">new</span> <span class="n">Runnable</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+                <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"SubThread Start"</span><span class="o">);</span>
+                <span class="k">new</span> <span class="n">android</span><span class="o">.</span><span class="na">os</span><span class="o">.</span><span class="na">CountDownTimer</span><span class="o">(</span><span class="mi">10000</span><span class="o">,</span> <span class="mi">2000</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="nd">@Override</span>
+                    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onTick</span><span class="o">(</span><span class="kt">long</span> <span class="n">millisUntilFinished</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"onTick millisUntilFinished = "</span> <span class="o">+</span> <span class="n">millisUntilFinished</span><span class="o">);</span>
+                    <span class="o">}</span>
+
+                    <span class="nd">@Override</span>
+                    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFinish</span><span class="o">()</span> <span class="o">{</span>
+                        <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"onFinish"</span><span class="o">);</span>
+                    <span class="o">}</span>
+                <span class="o">}.</span><span class="na">start</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">}).</span><span class="na">start</span><span class="o">();</span>
+</code></pre>
+</div>
+<p><img src="/images/countdowntimer/QQ截图20170305131412.png" alt="运行结果截图" /><br />
+原因是在主线程中Handler的Looper Android系统已经在framework层帮我们prepare(prepareMainLooper())过了，但在我们这个子线程没有Looper，那怎么办？我们可以借助HandlerThread完成，新建个自己的CountDownTimer类，把Android的CountDownTimer的源代码复制到我们新建的CountDownTimer类中，修改下包名，就不要用Android的CountDownTimer这个类的了，改造如下：</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">ce</span><span class="o">.</span><span class="na">countdowntimertest</span><span class="o">.</span><span class="na">common</span><span class="o">;</span>
+
+<span class="cm">/*
+ * Copyright (C) 2008 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */</span>
+
+<span class="kn">import</span> <span class="nn">android.os.Handler</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">android.os.HandlerThread</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">android.os.Looper</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">android.os.Message</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">android.os.SystemClock</span><span class="o">;</span>
+
+<span class="cm">/**
+ *
+ * Created by CE
+ *
+ * Schedule a countdown until a time in the future, with
+ * regular notifications on intervals along the way.
+ *
+ * Example of showing a 30 second countdown in a text field:
+ *
+ * &lt;pre class="prettyprint"&gt;
+ * new CountDownTimer(30000, 1000) {
+ *
+ *     public void onTick(long millisUntilFinished) {
+ *         mTextField.setText("seconds remaining: " + millisUntilFinished / 1000);
+ *     }
+ *
+ *     public void onFinish() {
+ *         mTextField.setText("done!");
+ *     }
+ *  }.start();
+ * &lt;/pre&gt;
+ *
+ * The calls to {@link #onTick(long)} are synchronized to this object so that
+ * one call to {@link #onTick(long)} won't ever occur before the previous
+ * callback is complete.  This is only relevant when the implementation of
+ * {@link #onTick(long)} takes an amount of time to execute that is significant
+ * compared to the countdown interval.
+ */</span>
+<span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">CountDownTimer</span> <span class="o">{</span>
+
+    <span class="cm">/**
+     * Millis since epoch when alarm should stop.
+     */</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">mMillisInFuture</span><span class="o">;</span>
+
+    <span class="cm">/**
+     * The interval in millis that the user receives callbacks
+     */</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kt">long</span> <span class="n">mCountdownInterval</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kt">long</span> <span class="n">mStopTimeInFuture</span><span class="o">;</span>
+
+    <span class="cm">/**
+     * boolean representing if the timer was cancelled
+     */</span>
+    <span class="kd">private</span> <span class="kt">boolean</span> <span class="n">mCancelled</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+
+    <span class="cm">/**
+     * @param millisInFuture The number of millis in the future from the call
+     *   to {@link #start()} until the countdown is done and {@link #onFinish()}
+     *   is called.
+     * @param countDownInterval The interval along the way to receive
+     *   {@link #onTick(long)} callbacks.
+     */</span>
+    <span class="kd">public</span> <span class="nf">CountDownTimer</span><span class="o">(</span><span class="kt">long</span> <span class="n">millisInFuture</span><span class="o">,</span> <span class="kt">long</span> <span class="n">countDownInterval</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">mMillisInFuture</span> <span class="o">=</span> <span class="n">millisInFuture</span><span class="o">;</span>
+        <span class="n">mCountdownInterval</span> <span class="o">=</span> <span class="n">countDownInterval</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">isMainThread</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">mHandlerThread</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HandlerThread</span><span class="o">(</span><span class="s">"CountDownTimerThread"</span><span class="o">);</span>
+            <span class="n">mHandlerThread</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+            <span class="n">mHandler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Handler</span><span class="o">(</span><span class="n">mHandlerThread</span><span class="o">.</span><span class="na">getLooper</span><span class="o">(),</span> <span class="n">mCallback</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">mHandler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Handler</span><span class="o">(</span><span class="n">mCallback</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * Cancel the countdown.
+     */</span>
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kd">final</span> <span class="kt">void</span> <span class="nf">cancel</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">mCancelled</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="n">mHandler</span><span class="o">.</span><span class="na">removeMessages</span><span class="o">(</span><span class="n">MSG</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * Start the countdown.
+     */</span>
+    <span class="kd">public</span> <span class="kd">synchronized</span> <span class="kd">final</span> <span class="n">CountDownTimer</span> <span class="nf">start</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">mCancelled</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">mMillisInFuture</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">onFinish</span><span class="o">();</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">}</span>
+        <span class="n">mStopTimeInFuture</span> <span class="o">=</span> <span class="n">SystemClock</span><span class="o">.</span><span class="na">elapsedRealtime</span><span class="o">()</span> <span class="o">+</span> <span class="n">mMillisInFuture</span><span class="o">;</span>
+        <span class="n">mHandler</span><span class="o">.</span><span class="na">sendMessage</span><span class="o">(</span><span class="n">mHandler</span><span class="o">.</span><span class="na">obtainMessage</span><span class="o">(</span><span class="n">MSG</span><span class="o">));</span>
+        <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+    <span class="o">}</span>
+
+
+    <span class="kd">private</span> <span class="kt">boolean</span> <span class="nf">isMainThread</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">Looper</span><span class="o">.</span><span class="na">getMainLooper</span><span class="o">().</span><span class="na">getThread</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * Callback fired on regular interval.
+     * @param millisUntilFinished The amount of time until finished.
+     */</span>
+    <span class="kd">public</span> <span class="kd">abstract</span> <span class="kt">void</span> <span class="nf">onTick</span><span class="o">(</span><span class="kt">long</span> <span class="n">millisUntilFinished</span><span class="o">);</span>
+
+    <span class="cm">/**
+     * Callback fired when the time is up.
+     */</span>
+    <span class="kd">public</span> <span class="kd">abstract</span> <span class="kt">void</span> <span class="nf">onFinish</span><span class="o">();</span>
+
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">MSG</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+
+
+    <span class="c1">// handles counting down</span>
+    <span class="cm">/*private android.os.Handler mHandler = new android.os.Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+
+            synchronized (CountDownTimer.this) {
+                if (mCancelled) {
+                    return;
+                }
+
+                final long millisLeft = mStopTimeInFuture - SystemClock.elapsedRealtime();
+
+                if (millisLeft &lt;= 0) {
+                    onFinish();
+                } else if (millisLeft &lt; mCountdownInterval) {
+                    // no tick, just delay until done
+                    sendMessageDelayed(obtainMessage(MSG), millisLeft);
+                } else {
+                    long lastTickStart = SystemClock.elapsedRealtime();
+                    onTick(millisLeft);
+
+                    // take into account user's onTick taking time to execute
+                    long delay = lastTickStart + mCountdownInterval - SystemClock.elapsedRealtime();
+
+                    // special case: user's onTick took more than interval to
+                    // complete, skip to next interval
+                    while (delay &lt; 0) delay += mCountdownInterval;
+
+                    sendMessageDelayed(obtainMessage(MSG), delay);
+                }
+            }
+        }
+    };*/</span>
+
+    <span class="kd">private</span> <span class="n">HandlerThread</span> <span class="n">mHandlerThread</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">Handler</span> <span class="n">mHandler</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="n">Handler</span><span class="o">.</span><span class="na">Callback</span> <span class="n">mCallback</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Handler</span><span class="o">.</span><span class="na">Callback</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">handleMessage</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kd">synchronized</span> <span class="o">(</span><span class="n">CountDownTimer</span><span class="o">.</span><span class="na">this</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">mCancelled</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+                <span class="o">}</span>
+                <span class="kd">final</span> <span class="kt">long</span> <span class="n">millisLeft</span> <span class="o">=</span> <span class="n">mStopTimeInFuture</span> <span class="o">-</span> <span class="n">SystemClock</span><span class="o">.</span><span class="na">elapsedRealtime</span><span class="o">();</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">millisLeft</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">onFinish</span><span class="o">();</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">mHandlerThread</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="n">mHandlerThread</span><span class="o">.</span><span class="na">quit</span><span class="o">();</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">millisLeft</span> <span class="o">&lt;</span> <span class="n">mCountdownInterval</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="c1">// no tick, just delay until done</span>
+                    <span class="n">mHandler</span><span class="o">.</span><span class="na">sendMessageDelayed</span><span class="o">(</span><span class="n">mHandler</span><span class="o">.</span><span class="na">obtainMessage</span><span class="o">(</span><span class="n">MSG</span><span class="o">),</span> <span class="n">millisLeft</span><span class="o">);</span>
+                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                    <span class="kt">long</span> <span class="n">lastTickStart</span> <span class="o">=</span> <span class="n">SystemClock</span><span class="o">.</span><span class="na">elapsedRealtime</span><span class="o">();</span>
+                    <span class="n">onTick</span><span class="o">(</span><span class="n">millisLeft</span><span class="o">);</span>
+                    <span class="c1">// take into account user's onTick taking time to execute</span>
+                    <span class="kt">long</span> <span class="n">delay</span> <span class="o">=</span> <span class="n">lastTickStart</span> <span class="o">+</span> <span class="n">mCountdownInterval</span> <span class="o">-</span> <span class="n">SystemClock</span><span class="o">.</span><span class="na">elapsedRealtime</span><span class="o">();</span>
+                    <span class="c1">// special case: user's onTick took more than interval to</span>
+                    <span class="c1">// complete, skip to next interval</span>
+                    <span class="k">while</span> <span class="o">(</span><span class="n">delay</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span> <span class="n">delay</span> <span class="o">+=</span> <span class="n">mCountdownInterval</span><span class="o">;</span>
+                    <span class="n">mHandler</span><span class="o">.</span><span class="na">sendMessageDelayed</span><span class="o">(</span><span class="n">mHandler</span><span class="o">.</span><span class="na">obtainMessage</span><span class="o">(</span><span class="n">MSG</span><span class="o">),</span> <span class="n">delay</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">};</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+<p>如果是主线程就不用管了，如果是子线程我们就把HandlerThread的getLooper()拿出来给Handler。这里我用的是Handler.Callback来进行对消息处理的。现在我们把刚才在子线程中运行的CountDownTimer类改成我们自己定义的CountDownTimer类在运行一下：</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="k">new</span> <span class="n">Thread</span><span class="o">(</span><span class="k">new</span> <span class="n">Runnable</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"SubThread Start"</span><span class="o">);</span>
+        <span class="k">new</span> <span class="n">com</span><span class="o">.</span><span class="na">ce</span><span class="o">.</span><span class="na">countdowntimertest</span><span class="o">.</span><span class="na">common</span><span class="o">.</span><span class="na">CountDownTimer</span><span class="o">(</span><span class="mi">10000</span><span class="o">,</span> <span class="mi">2000</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onTick</span><span class="o">(</span><span class="kt">long</span> <span class="n">millisUntilFinished</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"onTick millisUntilFinished = "</span> <span class="o">+</span> <span class="n">millisUntilFinished</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFinish</span><span class="o">()</span> <span class="o">{</span>
+                <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"onFinish"</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}.</span><span class="na">start</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}).</span><span class="na">start</span><span class="o">();</span>
+</code></pre>
+</div>
+<p><img src="/images/countdowntimer/QQ截图20170305134806.png" alt="运行结果截图" /><br />
+可以运行了，当然在主线程也是正常的：</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"Start"</span><span class="o">);</span>
+        <span class="k">new</span> <span class="n">com</span><span class="o">.</span><span class="na">ce</span><span class="o">.</span><span class="na">countdowntimertest</span><span class="o">.</span><span class="na">common</span><span class="o">.</span><span class="na">CountDownTimer</span><span class="o">(</span><span class="mi">10000</span><span class="o">,</span> <span class="mi">2000</span><span class="o">)</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onTick</span><span class="o">(</span><span class="kt">long</span> <span class="n">millisUntilFinished</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"onTick millisUntilFinished = "</span> <span class="o">+</span> <span class="n">millisUntilFinished</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onFinish</span><span class="o">()</span> <span class="o">{</span>
+                <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="s">"CountDownTimerTest"</span><span class="o">,</span> <span class="s">"onFinish"</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}.</span><span class="na">start</span><span class="o">();</span>
+</code></pre>
+</div>
+<p><img src="/images/countdowntimer/QQ截图20170305135453.png" alt="运行结果截图" /><br />
+如果在CountDownTimerUtils类里想用这个改进的CountDownTimer，改下CountDownTimer的包名就可以运行。</p>
+
+<h4 id="源码地址"><a href="https://github.com/cekiasoo/CountDownTimerTest">源码地址</a></h4>
+
+        </article>
+        <hr>
+
+        
+        
+        
+
+        <div class="post-recent">
+    <div class="pre">
+        
+    </div>
+    <div class="nex">
+
+        
+    </div>
+</div>
+
+
+        <h2 id="comments">Comments</h2>
+        
+
+
+
+
+
+    </div>
+    <button class="anchor"><i class="fa fa-anchor"></i></button>
+    <div class="right">
+        <div class="wrap">
+
+            <!-- Content -->
+            <div class="side content">
+                <div>
+                    Content
+                </div>
+                <ul id="content-side" class="content-ul">
+                    
+                    <li><a href="#comments">Comments</a></li>
+                </ul>
+            </div>
+            <!-- 其他div框放到这里 -->
+            <!-- <div class="side">bbbb</div> -->
+        </div>
+    </div>
+</div>
+<script>
+/**
+ * target _blank
+ */
+(function() {
+    var aTags = document.querySelectorAll('article a:not([id])')
+    for (var i = 0; i < aTags.length; i++) {
+        aTags[i].setAttribute('target', '_blank')
+    }
+}());
+</script>
+<script src="/js/pageContent.js " charset="utf-8"></script>
+
+
+    <footer class="site-footer">
+
+
+    <div class="wrapper">
+
+        <p class="description">
+             来自 cekiasoo 的个人 blog！ 
+        </p>
+        <p class="contact">
+            Contact me at: 
+            <a href="https://github.com/cekiasoo" title="GitHub"><i class="fa fa-github" aria-hidden="true"></i></a>  
+            <a href="mailto:cekasoo@163.com" title="email"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>  
+            <a href="http://weibo.com/cekiasoo" title="Weibo"><i class="fa fa-weibo" aria-hidden="true"></i></a>   
+            <a href="https://twitter.com/cekiasoo" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>  
+            <a href="https://www.facebook.com/cekiasoo" title="Facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i></a>    
+        </p>
+        <p>
+            本站总访问量<span id="busuanzi_value_site_pv"></span>次，本站访客数<span id="busuanzi_value_site_uv"></span>人次，本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+        </p>
+        <p class="power">
+            <span>
+                Site powered by <a href="https://jekyllrb.com/">Jekyll</a> & <a href="https://pages.github.com/">Github Pages</a>.
+            </span>
+            <span>
+                Theme designed by <a href="https://github.com/cekiasoo">cekiasoo</a>.
+            </span>
+        </p>
+    </div>
+</footer>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <div class="back-to-top">
+    <a href="#top" data-scroll>
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    </a>
+</div>
+
+    <script src=" /js/main.js " charset="utf-8"></script>
+    <script src=" /js/smooth-scroll.min.js " charset="utf-8"></script>
+    <script type="text/javascript">
+      smoothScroll.init({
+        speed: 500, // Integer. How fast to complete the scroll in milliseconds
+        easing: 'easeInOutCubic', // Easing pattern to use
+        offset: 20, // Integer. How far to offset the scrolling anchor location in pixels
+      });
+    </script>
+    <!-- <script src=" /js/scroll.min.js " charset="utf-8"></script> -->
+  </body>
+
+</html>
