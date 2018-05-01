@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Android 按 AlertDialog 的确定按钮对话框不关闭的方法</title>
+    <meta name="description" content="  一、问题描述一、问题描述  最近在做项目需要在弹出 含 EditText 让用户输入的对话框，在按确定按钮时需要对输入的内容进行校验，但出现的问题是一按确定按钮就对话框就关闭，现在的问题是要让对话框在按确定按钮时对 EditText 的内容进行校验，如果校验不通过就不关闭，校验通过才关闭。">
+
+    <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://at.alicdn.com/t/font_8v3czwksspqlg14i.css">
+    <link rel="stylesheet" href="/css/main.css ">
+    <link rel="canonical" href="http://localhost:4001/2018/04/03/AndroidAlertDialog/">
+    <link rel="alternate" type="application/rss+xml" title="cekiasoo's blog" href="http://localhost:4001/feed.xml ">
+
+
+    <script>
+    // 百度统计代码
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?44057784c9cb1a12f1f7fcb6ae5c0237";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+
+
+</head>
+
+
+  <body>
+
+    <header id="top">
+    <div class="wrapper">
+        <a href="/" class="brand">cekiasoo's blog</a>
+        <small>Android Coder</small>
+        <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
+        <nav id="headerNav">
+            <ul>
+                <li>
+                    
+                    <a href="/">
+                    
+                        <i class="fa fa-home"></i>Home
+                    </a>
+                </li>
+
+                
+                    
+                    <li>
+                        
+                        <a href="/archive/">
+                        
+                            <i class="fa fa-archive"></i>Archives
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/category/">
+                        
+                            <i class="fa fa-th-list"></i>Categories
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/tag/">
+                        
+                            <i class="fa fa-tags"></i>Tags
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/about/">
+                        
+                            <i class="fa fa-heart"></i>About
+                        </a>
+                    </li>
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+        <div class="page clearfix" post>
+    <div class="left">
+        <h1>Android 按 AlertDialog 的确定按钮对话框不关闭的方法</h1>
+        <div class="label">
+
+            <div class="label-card">
+                <i class="fa fa-calendar"></i>2018-04-03
+            </div>
+
+            <div class="label-card">
+                <i class="fa fa-user"></i>cekiasoo
+                
+            </div>
+            <div class="label-card">
+                <p>阅读：<span id="busuanzi_value_page_pv"></span></p>
+            </div>
+            <div class="label-card">
+                
+            </div>
+
+            <div class="label-card">
+            
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#Android开发遇到的问题" title="Category: Android开发遇到的问题" rel="category">Android开发遇到的问题</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+            </div>
+
+            <div class="label-card">
+            
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <!--a href="/tag/#Android" title="Tag: Android" rel="tag">Android</a-->
+        <a href="/tag/#Android" title="Tag: Android" rel="tag">Android</a>&nbsp;
+    
+        <!--a href="/tag/#AlertDialog" title="Tag: AlertDialog" rel="tag">AlertDialog</a-->
+        <a href="/tag/#AlertDialog" title="Tag: AlertDialog" rel="tag">AlertDialog</a>
+    
+  
+
+</span>
+
+            </div>
+
+        </div>
+        <hr>
+        <article itemscope itemtype="http://schema.org/BlogPosting">
+        <ul id="markdown-toc">
+  <li><a href="#一问题描述" id="markdown-toc-一问题描述">一、问题描述</a></li>
+  <li><a href="#二源码分析" id="markdown-toc-二源码分析">二、源码分析</a></li>
+  <li><a href="#三问题解决" id="markdown-toc-三问题解决">三、问题解决</a></li>
+</ul>
+
+<h2 id="一问题描述">一、问题描述</h2>
+<blockquote>
+  <p>最近在做项目需要在弹出 含 EditText 让用户输入的对话框，在按确定按钮时需要对输入的内容进行校验，但出现的问题是一按确定按钮就对话框就关闭，现在的问题是要让对话框在按确定按钮时对 EditText 的内容进行校验，如果校验不通过就不关闭，校验通过才关闭。</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">private</span> <span class="n">AppCompatButton</span> <span class="n">mBtnShowDialog</span><span class="o">;</span>
+<span class="nd">@Override</span>
+<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+    <span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_main</span><span class="o">);</span>
+    <span class="n">mBtnShowDialog</span> <span class="o">=</span> <span class="o">(</span><span class="n">AppCompatButton</span><span class="o">)</span><span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">btn_show_dialog</span><span class="o">);</span>
+    <span class="n">View</span> <span class="n">viewDialog</span> <span class="o">=</span> <span class="n">getLayoutInflater</span><span class="o">().</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">view_dialog</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+    <span class="kd">final</span> <span class="n">AppCompatEditText</span> <span class="n">etInput</span> <span class="o">=</span> <span class="o">(</span><span class="n">AppCompatEditText</span><span class="o">)</span><span class="n">viewDialog</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">et_input</span><span class="o">);</span>
+    <span class="kd">final</span> <span class="n">AlertDialog</span> <span class="n">dialog</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AlertDialog</span><span class="o">.</span><span class="na">Builder</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">this</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">setTitle</span><span class="o">(</span><span class="s">"我是标题啊"</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">setView</span><span class="o">(</span><span class="n">viewDialog</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">setPositiveButton</span><span class="o">(</span><span class="n">android</span><span class="o">.</span><span class="na">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">ok</span><span class="o">,</span> <span class="k">new</span> <span class="n">DialogInterface</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+                <span class="nd">@Override</span>
+                <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">DialogInterface</span> <span class="n">dialogInterface</span><span class="o">,</span> <span class="kt">int</span> <span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">String</span> <span class="n">text</span> <span class="o">=</span> <span class="n">etInput</span><span class="o">.</span><span class="na">getText</span><span class="o">().</span><span class="na">toString</span><span class="o">().</span><span class="na">trim</span><span class="o">();</span>
+                    <span class="k">if</span> <span class="o">(!</span><span class="n">TextUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">text</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">this</span><span class="o">,</span>
+                                <span class="s">""</span> <span class="o">+</span> <span class="n">text</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                            <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">this</span><span class="o">,</span> <span class="s">"输入为空"</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">})</span>
+            <span class="o">.</span><span class="na">setNegativeButton</span><span class="o">(</span><span class="n">android</span><span class="o">.</span><span class="na">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">cancel</span><span class="o">,</span> <span class="k">new</span> <span class="n">DialogInterface</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+                <span class="nd">@Override</span>
+                <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">DialogInterface</span> <span class="n">dialogInterface</span><span class="o">,</span> <span class="kt">int</span> <span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+
+                <span class="o">}</span>
+            <span class="o">}).</span><span class="na">create</span><span class="o">();</span>
+    <span class="n">mBtnShowDialog</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">view</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="n">dialog</span><span class="o">.</span><span class="na">show</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">});</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>按照上面的这样做是没办法阻止 Dialog 关闭的</p>
+</blockquote>
+
+<p><img src="/images/Android AlertDialog/2017-1-22230942.gif" alt="运行结果截图" /></p>
+
+<h2 id="二源码分析">二、源码分析</h2>
+<blockquote>
+  <p>于是就去看了下源码，
+先点进 AlertDialog.Builder 的 setPositiveButton 方法去看看，</p>
+</blockquote>
+
+<p><img src="/images/Android AlertDialog/搜狗截图20180403130100.png" alt="代码截图" /></p>
+
+<blockquote>
+  <p>可以看到传进去的参数是赋给一个叫 P 的引用的</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+         * Set a listener to be invoked when the positive button of the dialog is pressed.
+         * @param textId The resource id of the text to display in the positive button
+         * @param listener The {@link DialogInterface.OnClickListener} to use.
+         *
+         * @return This Builder object to allow for chaining of calls to set methods
+         */</span>
+        <span class="kd">public</span> <span class="n">Builder</span> <span class="nf">setPositiveButton</span><span class="o">(</span><span class="nd">@StringRes</span> <span class="kt">int</span> <span class="n">textId</span><span class="o">,</span> <span class="kd">final</span> <span class="n">OnClickListener</span> <span class="n">listener</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">P</span><span class="o">.</span><span class="na">mPositiveButtonText</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="na">mContext</span><span class="o">.</span><span class="na">getText</span><span class="o">(</span><span class="n">textId</span><span class="o">);</span>
+            <span class="n">P</span><span class="o">.</span><span class="na">mPositiveButtonListener</span> <span class="o">=</span> <span class="n">listener</span><span class="o">;</span>
+            <span class="k">return</span> <span class="k">this</span><span class="o">;</span>
+        <span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>这个 P 的引用呢，是 AlertController.AlertParams 类型的</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code>    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Builder</span> <span class="o">{</span>
+        <span class="kd">private</span> <span class="kd">final</span> <span class="n">AlertController</span><span class="o">.</span><span class="na">AlertParams</span> <span class="n">P</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">mTheme</span><span class="o">;</span>
+
+        <span class="cm">/**
+         * Creates a builder for an alert dialog that uses the default alert
+         * dialog theme.
+         * &lt;p&gt;
+         * The default alert dialog theme is defined by
+         * {@link android.R.attr#alertDialogTheme} within the parent
+         * {@code context}'s theme.
+         *
+         * @param context the parent context
+         */</span>
+        <span class="kd">public</span> <span class="nf">Builder</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">Context</span> <span class="n">context</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="n">resolveDialogTheme</span><span class="o">(</span><span class="n">context</span><span class="o">,</span> <span class="mi">0</span><span class="o">));</span>
+        <span class="o">}</span>
+        <span class="o">......</span>
+    <span class="o">}</span>
+</code></pre>
+</div>
+<blockquote>
+  <p>再来看看 AlertDialog.Builder 的 create 方法</p>
+</blockquote>
+
+<p><img src="/images/Android AlertDialog/搜狗截图20180403131431.png" alt="代码截图" /></p>
+
+<blockquote>
+  <p>点击进去，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+         * Creates an {@link AlertDialog} with the arguments supplied to this
+         * builder.
+         * &lt;p&gt;
+         * Calling this method does not display the dialog. If no additional
+         * processing is needed, {@link #show()} may be called instead to both
+         * create and display the dialog.
+         */</span>
+        <span class="kd">public</span> <span class="n">AlertDialog</span> <span class="nf">create</span><span class="o">()</span> <span class="o">{</span>
+            <span class="c1">// We can't use Dialog's 3-arg constructor with the createThemeContextWrapper param,</span>
+            <span class="c1">// so we always have to re-set the theme</span>
+            <span class="kd">final</span> <span class="n">AlertDialog</span> <span class="n">dialog</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AlertDialog</span><span class="o">(</span><span class="n">P</span><span class="o">.</span><span class="na">mContext</span><span class="o">,</span> <span class="n">mTheme</span><span class="o">);</span>
+            <span class="n">P</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">dialog</span><span class="o">.</span><span class="na">mAlert</span><span class="o">);</span>
+            <span class="n">dialog</span><span class="o">.</span><span class="na">setCancelable</span><span class="o">(</span><span class="n">P</span><span class="o">.</span><span class="na">mCancelable</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">P</span><span class="o">.</span><span class="na">mCancelable</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">dialog</span><span class="o">.</span><span class="na">setCanceledOnTouchOutside</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="n">dialog</span><span class="o">.</span><span class="na">setOnCancelListener</span><span class="o">(</span><span class="n">P</span><span class="o">.</span><span class="na">mOnCancelListener</span><span class="o">);</span>
+            <span class="n">dialog</span><span class="o">.</span><span class="na">setOnDismissListener</span><span class="o">(</span><span class="n">P</span><span class="o">.</span><span class="na">mOnDismissListener</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">P</span><span class="o">.</span><span class="na">mOnKeyListener</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">dialog</span><span class="o">.</span><span class="na">setOnKeyListener</span><span class="o">(</span><span class="n">P</span><span class="o">.</span><span class="na">mOnKeyListener</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">return</span> <span class="n">dialog</span><span class="o">;</span>
+        <span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>可以看到这里有个 P.apply(dialog.mAlert); 再进去这里边看看，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code>        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">apply</span><span class="o">(</span><span class="n">AlertController</span> <span class="n">dialog</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">mCustomTitleView</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">dialog</span><span class="o">.</span><span class="na">setCustomTitle</span><span class="o">(</span><span class="n">mCustomTitleView</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">mTitle</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">dialog</span><span class="o">.</span><span class="na">setTitle</span><span class="o">(</span><span class="n">mTitle</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">mIcon</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">dialog</span><span class="o">.</span><span class="na">setIcon</span><span class="o">(</span><span class="n">mIcon</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">mIconId</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">dialog</span><span class="o">.</span><span class="na">setIcon</span><span class="o">(</span><span class="n">mIconId</span><span class="o">);</span>
+                <span class="o">}</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">mIconAttrId</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">dialog</span><span class="o">.</span><span class="na">setIcon</span><span class="o">(</span><span class="n">dialog</span><span class="o">.</span><span class="na">getIconAttributeResId</span><span class="o">(</span><span class="n">mIconAttrId</span><span class="o">));</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">mMessage</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">dialog</span><span class="o">.</span><span class="na">setMessage</span><span class="o">(</span><span class="n">mMessage</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">mPositiveButtonText</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">dialog</span><span class="o">.</span><span class="na">setButton</span><span class="o">(</span><span class="n">DialogInterface</span><span class="o">.</span><span class="na">BUTTON_POSITIVE</span><span class="o">,</span> <span class="n">mPositiveButtonText</span><span class="o">,</span>
+                        <span class="n">mPositiveButtonListener</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">mNegativeButtonText</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">dialog</span><span class="o">.</span><span class="na">setButton</span><span class="o">(</span><span class="n">DialogInterface</span><span class="o">.</span><span class="na">BUTTON_NEGATIVE</span><span class="o">,</span> <span class="n">mNegativeButtonText</span><span class="o">,</span>
+                        <span class="n">mNegativeButtonListener</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="o">......</span>
+        <span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>这是在 AlertController.AlertParams 类里的，有个 dialog.setButton , 传入 text 和 listener 等，那就再点进去看看吧</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Sets a click listener or a message to be sent when the button is clicked.
+ * You only need to pass one of {@code listener} or {@code msg}.
+ *
+ * @param whichButton Which button, can be one of
+ *                    {@link DialogInterface#BUTTON_POSITIVE},
+ *                    {@link DialogInterface#BUTTON_NEGATIVE}, or
+ *                    {@link DialogInterface#BUTTON_NEUTRAL}
+ * @param text        The text to display in positive button.
+ * @param listener    The {@link DialogInterface.OnClickListener} to use.
+ * @param msg         The {@link Message} to be sent when clicked.
+ */</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setButton</span><span class="o">(</span><span class="kt">int</span> <span class="n">whichButton</span><span class="o">,</span> <span class="n">CharSequence</span> <span class="n">text</span><span class="o">,</span>
+        <span class="n">DialogInterface</span><span class="o">.</span><span class="na">OnClickListener</span> <span class="n">listener</span><span class="o">,</span> <span class="n">Message</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="k">if</span> <span class="o">(</span><span class="n">msg</span> <span class="o">==</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">listener</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">mHandler</span><span class="o">.</span><span class="na">obtainMessage</span><span class="o">(</span><span class="n">whichButton</span><span class="o">,</span> <span class="n">listener</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="k">switch</span> <span class="o">(</span><span class="n">whichButton</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="k">case</span> <span class="n">DialogInterface</span><span class="o">.</span><span class="na">BUTTON_POSITIVE</span><span class="o">:</span>
+            <span class="n">mButtonPositiveText</span> <span class="o">=</span> <span class="n">text</span><span class="o">;</span>
+            <span class="n">mButtonPositiveMessage</span> <span class="o">=</span> <span class="n">msg</span><span class="o">;</span>
+            <span class="k">break</span><span class="o">;</span>
+
+        <span class="k">case</span> <span class="n">DialogInterface</span><span class="o">.</span><span class="na">BUTTON_NEGATIVE</span><span class="o">:</span>
+            <span class="n">mButtonNegativeText</span> <span class="o">=</span> <span class="n">text</span><span class="o">;</span>
+            <span class="n">mButtonNegativeMessage</span> <span class="o">=</span> <span class="n">msg</span><span class="o">;</span>
+            <span class="k">break</span><span class="o">;</span>
+
+        <span class="k">case</span> <span class="n">DialogInterface</span><span class="o">.</span><span class="na">BUTTON_NEUTRAL</span><span class="o">:</span>
+            <span class="n">mButtonNeutralText</span> <span class="o">=</span> <span class="n">text</span><span class="o">;</span>
+            <span class="n">mButtonNeutralMessage</span> <span class="o">=</span> <span class="n">msg</span><span class="o">;</span>
+            <span class="k">break</span><span class="o">;</span>
+
+        <span class="k">default</span><span class="o">:</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"Button does not exist"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>看到有个 mHandler.obtainMessage 和 和 mButtonPositiveMessage，mButtonNegativeMessage 等，原来是用的 Handler， 那就看一下这个 mHandler，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="nf">AlertController</span><span class="o">(</span><span class="n">Context</span> <span class="n">context</span><span class="o">,</span> <span class="n">AppCompatDialog</span> <span class="n">di</span><span class="o">,</span> <span class="n">Window</span> <span class="n">window</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">mContext</span> <span class="o">=</span> <span class="n">context</span><span class="o">;</span>
+    <span class="n">mDialog</span> <span class="o">=</span> <span class="n">di</span><span class="o">;</span>
+    <span class="n">mWindow</span> <span class="o">=</span> <span class="n">window</span><span class="o">;</span>
+    <span class="n">mHandler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ButtonHandler</span><span class="o">(</span><span class="n">di</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>这个 mHandler 是 ButtonHandler 那就去看看 ButtonHandler</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">private</span> <span class="kd">final</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span> <span class="n">mButtonHandler</span> <span class="o">=</span> <span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="n">Message</span> <span class="n">m</span><span class="o">;</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">v</span> <span class="o">==</span> <span class="n">mButtonPositive</span> <span class="o">&amp;&amp;</span> <span class="n">mButtonPositiveMessage</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">Message</span><span class="o">.</span><span class="na">obtain</span><span class="o">(</span><span class="n">mButtonPositiveMessage</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">v</span> <span class="o">==</span> <span class="n">mButtonNegative</span> <span class="o">&amp;&amp;</span> <span class="n">mButtonNegativeMessage</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">Message</span><span class="o">.</span><span class="na">obtain</span><span class="o">(</span><span class="n">mButtonNegativeMessage</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">v</span> <span class="o">==</span> <span class="n">mButtonNeutral</span> <span class="o">&amp;&amp;</span> <span class="n">mButtonNeutralMessage</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">Message</span><span class="o">.</span><span class="na">obtain</span><span class="o">(</span><span class="n">mButtonNeutralMessage</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">m</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">m</span><span class="o">.</span><span class="na">sendToTarget</span><span class="o">();</span>
+        <span class="o">}</span>
+
+        <span class="c1">// Post a message so we dismiss after the above handlers are executed</span>
+        <span class="n">mHandler</span><span class="o">.</span><span class="na">obtainMessage</span><span class="o">(</span><span class="n">ButtonHandler</span><span class="o">.</span><span class="na">MSG_DISMISS_DIALOG</span><span class="o">,</span> <span class="n">mDialog</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">sendToTarget</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+
+<span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">ButtonHandler</span> <span class="kd">extends</span> <span class="n">Handler</span> <span class="o">{</span>
+    <span class="c1">// Button clicks have Message.what as the BUTTON{1,2,3} constant</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="kt">int</span> <span class="n">MSG_DISMISS_DIALOG</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="n">WeakReference</span><span class="o">&lt;</span><span class="n">DialogInterface</span><span class="o">&gt;</span> <span class="n">mDialog</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">ButtonHandler</span><span class="o">(</span><span class="n">DialogInterface</span> <span class="n">dialog</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">mDialog</span> <span class="o">=</span> <span class="k">new</span> <span class="n">WeakReference</span><span class="o">&lt;&gt;(</span><span class="n">dialog</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">handleMessage</span><span class="o">(</span><span class="n">Message</span> <span class="n">msg</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">switch</span> <span class="o">(</span><span class="n">msg</span><span class="o">.</span><span class="na">what</span><span class="o">)</span> <span class="o">{</span>
+
+            <span class="k">case</span> <span class="n">DialogInterface</span><span class="o">.</span><span class="na">BUTTON_POSITIVE</span><span class="o">:</span>
+            <span class="k">case</span> <span class="n">DialogInterface</span><span class="o">.</span><span class="na">BUTTON_NEGATIVE</span><span class="o">:</span>
+            <span class="k">case</span> <span class="n">DialogInterface</span><span class="o">.</span><span class="na">BUTTON_NEUTRAL</span><span class="o">:</span>
+                <span class="o">((</span><span class="n">DialogInterface</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">)</span> <span class="n">msg</span><span class="o">.</span><span class="na">obj</span><span class="o">).</span><span class="na">onClick</span><span class="o">(</span><span class="n">mDialog</span><span class="o">.</span><span class="na">get</span><span class="o">(),</span> <span class="n">msg</span><span class="o">.</span><span class="na">what</span><span class="o">);</span>
+                <span class="k">break</span><span class="o">;</span>
+
+            <span class="k">case</span> <span class="nl">MSG_DISMISS_DIALOG:</span>
+                <span class="o">((</span><span class="n">DialogInterface</span><span class="o">)</span> <span class="n">msg</span><span class="o">.</span><span class="na">obj</span><span class="o">).</span><span class="na">dismiss</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>在看 ButtonHandler 的时候发现上面有个 View.OnClickListener 的匿名内部类有一句注释就比较有意思 Post a message so we dismiss after the above handlers are executed，
+说在执行上面的操作后就 dismiss，好吧，找找看在哪里用到 mButtonHandler</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code>    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">setupButtons</span><span class="o">(</span><span class="n">ViewGroup</span> <span class="n">buttonPanel</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kt">int</span> <span class="n">BIT_BUTTON_POSITIVE</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">BIT_BUTTON_NEGATIVE</span> <span class="o">=</span> <span class="mi">2</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">BIT_BUTTON_NEUTRAL</span> <span class="o">=</span> <span class="mi">4</span><span class="o">;</span>
+        <span class="kt">int</span> <span class="n">whichButtons</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span>
+        <span class="n">mButtonPositive</span> <span class="o">=</span> <span class="o">(</span><span class="n">Button</span><span class="o">)</span> <span class="n">buttonPanel</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">android</span><span class="o">.</span><span class="na">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">button1</span><span class="o">);</span>
+        <span class="n">mButtonPositive</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="n">mButtonHandler</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">TextUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">mButtonPositiveText</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">mButtonPositive</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">mButtonPositive</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">mButtonPositiveText</span><span class="o">);</span>
+            <span class="n">mButtonPositive</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">VISIBLE</span><span class="o">);</span>
+            <span class="n">whichButtons</span> <span class="o">=</span> <span class="n">whichButtons</span> <span class="o">|</span> <span class="n">BIT_BUTTON_POSITIVE</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="n">mButtonNegative</span> <span class="o">=</span> <span class="o">(</span><span class="n">Button</span><span class="o">)</span> <span class="n">buttonPanel</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">android</span><span class="o">.</span><span class="na">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">button2</span><span class="o">);</span>
+        <span class="n">mButtonNegative</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="n">mButtonHandler</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">TextUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">mButtonNegativeText</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">mButtonNegative</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">GONE</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">mButtonNegative</span><span class="o">.</span><span class="na">setText</span><span class="o">(</span><span class="n">mButtonNegativeText</span><span class="o">);</span>
+            <span class="n">mButtonNegative</span><span class="o">.</span><span class="na">setVisibility</span><span class="o">(</span><span class="n">View</span><span class="o">.</span><span class="na">VISIBLE</span><span class="o">);</span>
+
+            <span class="n">whichButtons</span> <span class="o">=</span> <span class="n">whichButtons</span> <span class="o">|</span> <span class="n">BIT_BUTTON_NEGATIVE</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="n">mButtonNeutral</span> <span class="o">=</span> <span class="o">(</span><span class="n">Button</span><span class="o">)</span> <span class="n">buttonPanel</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">android</span><span class="o">.</span><span class="na">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">button3</span><span class="o">);</span>
+        <span class="n">mButtonNeutral</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="n">mButtonHandler</span><span class="o">);</span>
+        <span class="o">......</span>
+    <span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>可以看到原来在 setupButtons 这个方法中， mButtonHandler 就是 对话框的 Button 的 点击事件，所以点击按钮时后对话框都会关闭，那不想关闭的话该怎么办？也是有办法的。</p>
+</blockquote>
+
+<h2 id="三问题解决">三、问题解决</h2>
+<blockquote>
+  <p>在看源代码的时候看到 AlertDialog 有个 getButton 方法</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+     * Gets one of the buttons used in the dialog. Returns null if the specified
+     * button does not exist or the dialog has not yet been fully created (for
+     * example, via {@link #show()} or {@link #create()}).
+     *
+     * @param whichButton The identifier of the button that should be returned.
+     *                    For example, this can be
+     *                    {@link DialogInterface#BUTTON_POSITIVE}.
+     * @return The button from the dialog, or null if a button does not exist.
+     */</span>
+    <span class="kd">public</span> <span class="n">Button</span> <span class="nf">getButton</span><span class="o">(</span><span class="kt">int</span> <span class="n">whichButton</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">mAlert</span><span class="o">.</span><span class="na">getButton</span><span class="o">(</span><span class="n">whichButton</span><span class="o">);</span>
+    <span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>这个方法是 public 的，说明在外面可以调用，参数从注释中可以看出是获取 Button 的标志，里面是 mAlert.getButton(whichButton)，mAlert 是 AlertController 类型的引用，进去看看，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Button</span> <span class="nf">getButton</span><span class="o">(</span><span class="kt">int</span> <span class="n">whichButton</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">switch</span> <span class="o">(</span><span class="n">whichButton</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">case</span> <span class="n">DialogInterface</span><span class="o">.</span><span class="na">BUTTON_POSITIVE</span><span class="o">:</span>
+            <span class="k">return</span> <span class="n">mButtonPositive</span><span class="o">;</span>
+        <span class="k">case</span> <span class="n">DialogInterface</span><span class="o">.</span><span class="na">BUTTON_NEGATIVE</span><span class="o">:</span>
+            <span class="k">return</span> <span class="n">mButtonNegative</span><span class="o">;</span>
+        <span class="k">case</span> <span class="n">DialogInterface</span><span class="o">.</span><span class="na">BUTTON_NEUTRAL</span><span class="o">:</span>
+            <span class="k">return</span> <span class="n">mButtonNeutral</span><span class="o">;</span>
+        <span class="k">default</span><span class="o">:</span>
+            <span class="k">return</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>原来就是根据 DialogInterface.BUTTON_XXX 返回不同的 Button，而我们刚才在 setupButtons 方法中看过，mButtonPositive 等是通过 findViewById 获得的，所以我们可以获得 Button 后自己再实现 setOnClickListener，这样就可以了，还有一点要注意的就是 调用了 Dialog 的 show 方法才可以使用 getButton ，getButton 的注释说的很清楚，如果指定的 Button 不存在或者 dialog 还没完全创建就会返回 null, 那在哪里调用 getButton 方法呢？Dialog 有个 setOnShowListener 方法</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Sets a listener to be invoked when the dialog is shown.
+ * @param listener The {@link DialogInterface.OnShowListener} to use.
+ */</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setOnShowListener</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">OnShowListener</span> <span class="n">listener</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">listener</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">mShowMessage</span> <span class="o">=</span> <span class="n">mListenersHandler</span><span class="o">.</span><span class="na">obtainMessage</span><span class="o">(</span><span class="n">SHOW</span><span class="o">,</span> <span class="n">listener</span><span class="o">);</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="n">mShowMessage</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>从注释可以看出当 Dialog 显示的时候就会调用，所以就在这里调用 getButton，按照下面这样就可以了实现点击按钮 Dialog 不关闭了</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">private</span> <span class="n">AppCompatButton</span> <span class="n">mBtnShowDialog</span><span class="o">;</span>
+<span class="nd">@Override</span>
+<span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+    <span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_main</span><span class="o">);</span>
+    <span class="n">mBtnShowDialog</span> <span class="o">=</span> <span class="o">(</span><span class="n">AppCompatButton</span><span class="o">)</span><span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">btn_show_dialog</span><span class="o">);</span>
+    <span class="n">View</span> <span class="n">viewDialog</span> <span class="o">=</span> <span class="n">getLayoutInflater</span><span class="o">().</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">view_dialog</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+    <span class="kd">final</span> <span class="n">AppCompatEditText</span> <span class="n">etInput</span> <span class="o">=</span> <span class="o">(</span><span class="n">AppCompatEditText</span><span class="o">)</span><span class="n">viewDialog</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">et_input</span><span class="o">);</span>
+    <span class="kd">final</span> <span class="n">AlertDialog</span> <span class="n">dialog</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AlertDialog</span><span class="o">.</span><span class="na">Builder</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">this</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">setTitle</span><span class="o">(</span><span class="s">"我是标题啊"</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">setView</span><span class="o">(</span><span class="n">viewDialog</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">setPositiveButton</span><span class="o">(</span><span class="n">android</span><span class="o">.</span><span class="na">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">ok</span><span class="o">,</span> <span class="kc">null</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">setNegativeButton</span><span class="o">(</span><span class="n">android</span><span class="o">.</span><span class="na">R</span><span class="o">.</span><span class="na">string</span><span class="o">.</span><span class="na">cancel</span><span class="o">,</span> <span class="k">new</span> <span class="n">DialogInterface</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+                <span class="nd">@Override</span>
+                <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">DialogInterface</span> <span class="n">dialogInterface</span><span class="o">,</span> <span class="kt">int</span> <span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+
+                <span class="o">}</span>
+            <span class="o">}).</span><span class="na">create</span><span class="o">();</span>
+    <span class="n">dialog</span><span class="o">.</span><span class="na">setOnShowListener</span><span class="o">(</span><span class="k">new</span> <span class="n">DialogInterface</span><span class="o">.</span><span class="na">OnShowListener</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onShow</span><span class="o">(</span><span class="n">DialogInterface</span> <span class="n">dialogInterface</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">Button</span> <span class="n">btnPositive</span> <span class="o">=</span> <span class="n">dialog</span><span class="o">.</span><span class="na">getButton</span><span class="o">(</span><span class="n">DialogInterface</span><span class="o">.</span><span class="na">BUTTON_POSITIVE</span><span class="o">);</span>
+            <span class="n">btnPositive</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+                <span class="nd">@Override</span>
+                <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">view</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">String</span> <span class="n">text</span> <span class="o">=</span> <span class="n">etInput</span><span class="o">.</span><span class="na">getText</span><span class="o">().</span><span class="na">toString</span><span class="o">().</span><span class="na">trim</span><span class="o">();</span>
+                    <span class="k">if</span> <span class="o">(!</span><span class="n">TextUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">text</span><span class="o">))</span> <span class="o">{</span>
+                        <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">this</span><span class="o">,</span>
+                                <span class="s">""</span> <span class="o">+</span> <span class="n">text</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+                        <span class="n">dialog</span><span class="o">.</span><span class="na">dismiss</span><span class="o">();</span>
+                    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                        <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">MainActivity</span><span class="o">.</span><span class="na">this</span><span class="o">,</span>
+                                <span class="s">"你还真随便"</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+                    <span class="o">}</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+        <span class="o">}</span>
+    <span class="o">});</span>
+    <span class="n">mBtnShowDialog</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">view</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">dialog</span><span class="o">.</span><span class="na">show</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">});</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p><img src="/images/Android AlertDialog/2017-1-22230941.gif" alt="运行结果截图" /></p>
+
+<ul>
+  <li><strong><a href="https://github.com/cekiasoo/AlertDialogTest">源码地址</a></strong></li>
+</ul>
+
+        </article>
+        <hr>
+
+        
+        
+            
+            
+                
+                    
+                        
+                        <h2 id="similar_posts">Similar Posts</h2>
+                        <ul>
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/04/27/LeakcanaryForEclipse/">Android 在 Eclipse 项目中使用 Leakcanary 进行内存泄露检测
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/03/05/CountDownTimer/">Android 倒计时 CountDownTimer 的使用和封装及改进
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+        
+        
+            </ul>
+        
+
+        <div class="post-recent">
+    <div class="pre">
+        
+        <p><strong>上一篇</strong> <a href="/2017/04/27/LeakcanaryForEclipse/">Android 在 Eclipse 项目中使用 Leakcanary 进行内存泄露检测</a></p>
+        
+    </div>
+    <div class="nex">
+
+        
+    </div>
+</div>
+
+
+        <h2 id="comments">Comments</h2>
+        
+
+
+
+
+
+    </div>
+    <button class="anchor"><i class="fa fa-anchor"></i></button>
+    <div class="right">
+        <div class="wrap">
+
+            <!-- Content -->
+            <div class="side content">
+                <div>
+                    Content
+                </div>
+                <ul id="content-side" class="content-ul">
+                    
+                    <li><a href="#similar_posts">Similar Posts</a></li>
+                    
+                    <li><a href="#comments">Comments</a></li>
+                </ul>
+            </div>
+            <!-- 其他div框放到这里 -->
+            <!-- <div class="side">bbbb</div> -->
+        </div>
+    </div>
+</div>
+<script>
+/**
+ * target _blank
+ */
+(function() {
+    var aTags = document.querySelectorAll('article a:not([id])')
+    for (var i = 0; i < aTags.length; i++) {
+        aTags[i].setAttribute('target', '_blank')
+    }
+}());
+</script>
+<script src="/js/pageContent.js " charset="utf-8"></script>
+
+
+    <footer class="site-footer">
+
+
+    <div class="wrapper">
+
+        <p class="description">
+             来自 cekiasoo 的个人 blog！ 
+        </p>
+        <p class="contact">
+            Contact me at: 
+            <a href="https://github.com/cekiasoo" title="GitHub"><i class="fa fa-github" aria-hidden="true"></i></a>  
+            <a href="mailto:cekasoo@163.com" title="email"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>  
+            <a href="http://weibo.com/cekiasoo" title="Weibo"><i class="fa fa-weibo" aria-hidden="true"></i></a>   
+            <a href="https://twitter.com/cekiasoo" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>  
+            <a href="https://www.facebook.com/cekiasoo" title="Facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i></a>    
+        </p>
+        <p>
+            本站总访问量<span id="busuanzi_value_site_pv"></span>次，本站访客数<span id="busuanzi_value_site_uv"></span>人次，本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+        </p>
+        <p class="power">
+            <span>
+                Site powered by <a href="https://jekyllrb.com/">Jekyll</a> & <a href="https://pages.github.com/">Github Pages</a>.
+            </span>
+            <span>
+                Theme designed by <a href="https://github.com/cekiasoo">cekiasoo</a>.
+            </span>
+        </p>
+    </div>
+</footer>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <div class="back-to-top">
+    <a href="#top" data-scroll>
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    </a>
+</div>
+
+    <script src=" /js/main.js " charset="utf-8"></script>
+    <script src=" /js/smooth-scroll.min.js " charset="utf-8"></script>
+    <script type="text/javascript">
+      smoothScroll.init({
+        speed: 500, // Integer. How fast to complete the scroll in milliseconds
+        easing: 'easeInOutCubic', // Easing pattern to use
+        offset: 20, // Integer. How far to offset the scrolling anchor location in pixels
+      });
+    </script>
+    <!-- <script src=" /js/scroll.min.js " charset="utf-8"></script> -->
+  </body>
+
+</html>

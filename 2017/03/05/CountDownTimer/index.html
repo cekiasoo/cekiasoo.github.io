@@ -6,8 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Android 倒计时CountDownTimer的使用和封装及改进</title>
-    <meta name="description" content="  （一）介绍  （二）使用  （三）封装  （四）改进          源码地址      （一）介绍  官方文档。CountDownTimer是一个倒计时的类，还可以指定时间间隔定期通知，举个栗子，比如说你倒计时是100秒的，可以指定每20秒通知一次，这样开始的时候会回调一次，20秒时会回调一次，40秒时会...">
+    <title>Android 倒计时 CountDownTimer 的使用和封装及改进</title>
+    <meta name="description" content="  （一）介绍（一）介绍  官方文档。CountDownTimer是一个倒计时的类，还可以指定时间间隔定期通知，举个栗子，比如说你倒计时是100秒的，可以指定每20秒通知一次，这样开始的时候会回调一次，20秒时会回调一次，40秒时会回调一次…，200秒时的回调和时间间隔的回调不同方法的。">
 
     <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="icon" href="/favicon.ico?" type="image/x-icon">
@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="https://at.alicdn.com/t/font_8v3czwksspqlg14i.css">
     <link rel="stylesheet" href="/css/main.css ">
     <link rel="canonical" href="http://localhost:4001/2017/03/05/CountDownTimer/">
-    <link rel="alternate" type="application/rss+xml" title="cekiasoo 的 blog" href="http://localhost:4001/feed.xml ">
+    <link rel="alternate" type="application/rss+xml" title="cekiasoo's blog" href="http://localhost:4001/feed.xml ">
 
 
     <script>
@@ -38,7 +38,7 @@
 
     <header id="top">
     <div class="wrapper">
-        <a href="/" class="brand">cekiasoo 的 blog</a>
+        <a href="/" class="brand">cekiasoo's blog</a>
         <small>Android Coder</small>
         <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
         <nav id="headerNav">
@@ -106,7 +106,7 @@
 
         <div class="page clearfix" post>
     <div class="left">
-        <h1>Android 倒计时CountDownTimer的使用和封装及改进</h1>
+        <h1>Android 倒计时 CountDownTimer 的使用和封装及改进</h1>
         <div class="label">
 
             <div class="label-card">
@@ -133,7 +133,7 @@
   <i class="fa fa-th-list"></i>
   
     
-        <a href="/category/#Android" title="Category: Android" rel="category">Android</a>
+        <a href="/category/#Android开发" title="Category: Android开发" rel="category">Android开发</a>
     
   
 
@@ -170,17 +170,19 @@
   <li><a href="#二使用" id="markdown-toc-二使用">（二）使用</a></li>
   <li><a href="#三封装" id="markdown-toc-三封装">（三）封装</a></li>
   <li><a href="#四改进" id="markdown-toc-四改进">（四）改进</a>    <ul>
-      <li><a href="#源码地址" id="markdown-toc-源码地址"><a href="https://github.com/cekiasoo/CountDownTimerTest">源码地址</a></a></li>
+      <li><a href="#font-color33ccff源码地址font" id="markdown-toc-font-color33ccff源码地址font"><a href="https://github.com/cekiasoo/CountDownTimerTest">&lt;font color=#33ccff&gt;源码地址&lt;/font&gt;</a></a></li>
     </ul>
   </li>
 </ul>
 
 <h2 id="一介绍">（一）介绍</h2>
+
 <blockquote>
   <p><a href="https://developer.android.google.cn/reference/android/os/CountDownTimer.html">官方文档。</a>CountDownTimer是一个倒计时的类，还可以指定时间间隔定期通知，举个栗子，比如说你倒计时是100秒的，可以指定每20秒通知一次，这样开始的时候会回调一次，20秒时会回调一次，40秒时会回调一次…，200秒时的回调和时间间隔的回调不同方法的。</p>
 </blockquote>
 
 <h2 id="二使用">（二）使用</h2>
+
 <blockquote>
   <p>CountDownTimer只有一个构造，</p>
   <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
@@ -230,7 +232,11 @@ CountDownTimer的核心代码</p>
 </code></pre>
   </div>
   <p>如果倒计时后不让它执行了也可以取消倒计时，调用CountDownTimer的cancel()方法就可以取消倒计时了。</p>
-  <h2 id="三封装">（三）封装</h2>
+</blockquote>
+
+<h2 id="三封装">（三）封装</h2>
+
+<blockquote>
   <p>有时候我们并不关心onTick()，只需要关心onFinish()方法的执行，我们可以封装个工具类，把这两个功能分开，想单独用时就单独用，想合起来用时就合起来用。</p>
 </blockquote>
 
@@ -425,7 +431,9 @@ CountDownTimer的核心代码</p>
 </code></pre>
 </div>
 <p><img src="/images/countdowntimer/QQ截图20170305130312.png" alt="运行结果截图" /><br /></p>
+
 <h2 id="四改进">（四）改进</h2>
+
 <blockquote>
   <p>虽然CountDownTimer很好用，但有个缺点，就是只能在主线程中运行，如果在子线程中运行就会报错，</p>
 </blockquote>
@@ -691,13 +699,72 @@ CountDownTimer的核心代码</p>
 <p><img src="/images/countdowntimer/QQ截图20170305135453.png" alt="运行结果截图" /><br />
 如果在CountDownTimerUtils类里想用这个改进的CountDownTimer，改下CountDownTimer的包名就可以运行。</p>
 
-<h4 id="源码地址"><a href="https://github.com/cekiasoo/CountDownTimerTest">源码地址</a></h4>
+<h4 id="font-color33ccff源码地址font"><a href="https://github.com/cekiasoo/CountDownTimerTest">&lt;font color=#33ccff&gt;源码地址&lt;/font&gt;</a></h4>
 
         </article>
         <hr>
 
         
         
+            
+            
+                
+                    
+                        
+                        <h2 id="similar_posts">Similar Posts</h2>
+                        <ul>
+                        
+                        <li class="relatedPost">
+                            <a href="/2018/04/03/AndroidAlertDialog/">Android 按 AlertDialog 的确定按钮对话框不关闭的方法
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/04/27/LeakcanaryForEclipse/">Android 在 Eclipse 项目中使用 Leakcanary 进行内存泄露检测
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+        
+        
+            </ul>
         
 
         <div class="post-recent">
@@ -706,6 +773,8 @@ CountDownTimer的核心代码</p>
     </div>
     <div class="nex">
 
+        
+        <p><strong>下一篇</strong> <a href="/2017/04/27/LeakcanaryForEclipse/">Android 在 Eclipse 项目中使用 Leakcanary 进行内存泄露检测</a></p>
         
     </div>
 </div>
@@ -729,6 +798,8 @@ CountDownTimer的核心代码</p>
                     Content
                 </div>
                 <ul id="content-side" class="content-ul">
+                    
+                    <li><a href="#similar_posts">Similar Posts</a></li>
                     
                     <li><a href="#comments">Comments</a></li>
                 </ul>
