@@ -175,6 +175,7 @@
   <li><a href="#四使用" id="markdown-toc-四使用">四、使用</a>    <ul>
       <li><a href="#一引用" id="markdown-toc-一引用">（一）引用</a></li>
       <li><a href="#二在-androidmanifest-中配置" id="markdown-toc-二在-androidmanifest-中配置">（二）在 AndroidManifest 中配置</a></li>
+      <li><a href="#三在-application-中初始化" id="markdown-toc-三在-application-中初始化">（三）在 Application 中初始化</a></li>
     </ul>
   </li>
 </ul>
@@ -196,48 +197,69 @@
   <p>下载上面二中用于 Eclipse 的 Leakcanary 项目，导入 Leakcanary-watcher、Leakcanary-analyzer、Leakcanary-android， 在当前项目的引用 Leakcanary-android 这个 library。
 <img src="/images/LeakcanaryForEclipse/QQ截图20170426215052.png" alt="运行结果截图" /><br /></p>
   <h3 id="二在-androidmanifest-中配置">（二）在 AndroidManifest 中配置</h3>
-  <p>打开当前的 AndroidManifest 添加下面的代码。
-··· xml
-        <!-- Leakcanary config start -->
-        <service android:name="com.squareup.leakcanary.internal.HeapAnalyzerService" android:enabled="false" android:process=":leakcanary"></service>
-        <service android:name="com.squareup.leakcanary.DisplayLeakService" android:enabled="false"></service></p>
+  <p>打开当前的 AndroidManifest 添加下面的代码。</p>
 </blockquote>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>    &lt;activity
-        android:name="com.squareup.leakcanary.internal.DisplayLeakActivity"
-        android:enabled="false"
-        android:icon="@drawable/leak_canary_icon"
-        android:label="@string/leak_canary_display_activity_label"
-        android:taskAffinity="com.squareup.leakcanary"
-        android:theme="@style/leak_canary_LeakCanary.Base" &gt;
-        &lt;intent-filter&gt;
-            &lt;action android:name="android.intent.action.MAIN" /&gt;
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code>        <span class="c">&lt;!-- Leakcanary config start --&gt;</span>
+        <span class="nt">&lt;service</span>
+            <span class="na">android:name=</span><span class="s">"com.squareup.leakcanary.internal.HeapAnalyzerService"</span>
+            <span class="na">android:enabled=</span><span class="s">"false"</span>
+            <span class="na">android:process=</span><span class="s">":leakcanary"</span> <span class="nt">/&gt;</span>
+        <span class="nt">&lt;service</span>
+            <span class="na">android:name=</span><span class="s">"com.squareup.leakcanary.DisplayLeakService"</span>
+            <span class="na">android:enabled=</span><span class="s">"false"</span> <span class="nt">/&gt;</span>
 
-            &lt;category android:name="android.intent.category.LAUNCHER" /&gt;
-        &lt;/intent-filter&gt;
-    &lt;/activity&gt;
-    &lt;activity
-        android:name="com.squareup.leakcanary.internal.RequestStoragePermissionActivity"
-        android:enabled="false"
-        android:icon="@drawable/leak_canary_icon"
-        android:label="@string/leak_canary_storage_permission_activity_label"
-        android:taskAffinity="com.squareup.leakcanary"
-        android:theme="@style/leak_canary_Theme.Transparent" /&gt;
-    &lt;!-- Leakcanary config end --&gt; ``` &gt; 还有权限 ··· xml
-&lt;uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /&gt;
-&lt;uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /&gt; ``` ### （三）在 Application 中初始化 &gt; 新建一个 Application 类，继承自 Application 的，如果你项目已经有那就不需要新建了。 覆盖 onCreate() 方法，在 onCreate() 方法里调用 LeakCanary 的 install() 方法就可以了。 ``` java public class MyApplication extends Application {
-@Override
-public void onCreate() {
-	super.onCreate();
-	if (LeakCanary.isInAnalyzerProcess(this)) {
-		// This process is dedicated to LeakCanary for heap analysis.
-		// You should not init your app in this process.
-		return;
-	}
-	LeakCanary.install(this);
-} } ```
+        <span class="nt">&lt;activity</span>
+            <span class="na">android:name=</span><span class="s">"com.squareup.leakcanary.internal.DisplayLeakActivity"</span>
+            <span class="na">android:enabled=</span><span class="s">"false"</span>
+            <span class="na">android:icon=</span><span class="s">"@drawable/leak_canary_icon"</span>
+            <span class="na">android:label=</span><span class="s">"@string/leak_canary_display_activity_label"</span>
+            <span class="na">android:taskAffinity=</span><span class="s">"com.squareup.leakcanary"</span>
+            <span class="na">android:theme=</span><span class="s">"@style/leak_canary_LeakCanary.Base"</span> <span class="nt">&gt;</span>
+            <span class="nt">&lt;intent-filter&gt;</span>
+                <span class="nt">&lt;action</span> <span class="na">android:name=</span><span class="s">"android.intent.action.MAIN"</span> <span class="nt">/&gt;</span>
+
+                <span class="nt">&lt;category</span> <span class="na">android:name=</span><span class="s">"android.intent.category.LAUNCHER"</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;/intent-filter&gt;</span>
+        <span class="nt">&lt;/activity&gt;</span>
+        <span class="nt">&lt;activity</span>
+            <span class="na">android:name=</span><span class="s">"com.squareup.leakcanary.internal.RequestStoragePermissionActivity"</span>
+            <span class="na">android:enabled=</span><span class="s">"false"</span>
+            <span class="na">android:icon=</span><span class="s">"@drawable/leak_canary_icon"</span>
+            <span class="na">android:label=</span><span class="s">"@string/leak_canary_storage_permission_activity_label"</span>
+            <span class="na">android:taskAffinity=</span><span class="s">"com.squareup.leakcanary"</span>
+            <span class="na">android:theme=</span><span class="s">"@style/leak_canary_Theme.Transparent"</span> <span class="nt">/&gt;</span>
+        <span class="c">&lt;!-- Leakcanary config end --&gt;</span>
 </code></pre>
 </div>
+<blockquote>
+  <p>还有权限</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code>    <span class="nt">&lt;uses-permission</span> <span class="na">android:name=</span><span class="s">"android.permission.READ_EXTERNAL_STORAGE"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;uses-permission</span> <span class="na">android:name=</span><span class="s">"android.permission.WRITE_EXTERNAL_STORAGE"</span> <span class="nt">/&gt;</span>
+</code></pre>
+</div>
+
+<h3 id="三在-application-中初始化">（三）在 Application 中初始化</h3>
+<blockquote>
+  <p>新建一个 Application 类，继承自 Application 的，如果你项目已经有那就不需要新建了。
+覆盖 onCreate() 方法，在 onCreate() 方法里调用 LeakCanary 的 install() 方法就可以了。</p>
+  <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyApplication</span> <span class="kd">extends</span> <span class="n">Application</span> <span class="o">{</span>
+	<span class="nd">@Override</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">()</span> <span class="o">{</span>
+		<span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">();</span>
+		<span class="k">if</span> <span class="o">(</span><span class="n">LeakCanary</span><span class="o">.</span><span class="na">isInAnalyzerProcess</span><span class="o">(</span><span class="k">this</span><span class="o">))</span> <span class="o">{</span>
+			<span class="c1">// This process is dedicated to LeakCanary for heap analysis.</span>
+			<span class="c1">// You should not init your app in this process.</span>
+			<span class="k">return</span><span class="o">;</span>
+		<span class="o">}</span>
+		<span class="n">LeakCanary</span><span class="o">.</span><span class="na">install</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+  </div>
+</blockquote>
 
         </article>
         <hr>
