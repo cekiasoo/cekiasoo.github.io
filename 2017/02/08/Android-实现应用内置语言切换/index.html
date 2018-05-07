@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Android 实现应用内置语言切换</title>
+    <meta name="description" content="  一、需求一、需求  有时候应用需要在内部切换语言但又不影响系统的语言，比如是应用现在是中文的，系统语言也是中文的，我把应用的切换成英文显示后系统语言还是中文的，系统语言切换后也不会被改变，还有就是有些机的系统是被改造精简过的，比如有些国产机的系统的语言就被精简剩中文和英文。支付宝、微信、Top Story都有...">
+
+    <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://at.alicdn.com/t/font_8v3czwksspqlg14i.css">
+    <link rel="stylesheet" href="/css/main.css ">
+    <link rel="canonical" href="http://localhost:4001/2017/02/08/Android-%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%94%A8%E5%86%85%E7%BD%AE%E8%AF%AD%E8%A8%80%E5%88%87%E6%8D%A2/">
+    <link rel="alternate" type="application/rss+xml" title="cekiasoo's blog" href="http://localhost:4001/feed.xml ">
+
+
+    <script>
+    // 百度统计代码
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?44057784c9cb1a12f1f7fcb6ae5c0237";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+
+
+</head>
+
+
+  <body>
+
+    <header id="top">
+    <div class="wrapper">
+        <a href="/" class="brand">cekiasoo's blog</a>
+        <small>Android Coder</small>
+        <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
+        <nav id="headerNav">
+            <ul>
+                <li>
+                    
+                    <a href="/">
+                    
+                        <i class="fa fa-home"></i>Home
+                    </a>
+                </li>
+
+                
+                    
+                    <li>
+                        
+                        <a href="/archive/">
+                        
+                            <i class="fa fa-archive"></i>Archives
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/category/">
+                        
+                            <i class="fa fa-th-list"></i>Categories
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/tag/">
+                        
+                            <i class="fa fa-tags"></i>Tags
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/about/">
+                        
+                            <i class="fa fa-heart"></i>About
+                        </a>
+                    </li>
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+        <div class="page clearfix" post>
+    <div class="left">
+        <h1>Android 实现应用内置语言切换</h1>
+        <div class="label">
+
+            <div class="label-card">
+                <i class="fa fa-calendar"></i>2017-02-08
+            </div>
+
+            <div class="label-card">
+                <i class="fa fa-user"></i>cekiasoo
+                
+            </div>
+            <div class="label-card">
+                <p>阅读：<span id="busuanzi_value_page_pv"></span></p>
+            </div>
+            <div class="label-card">
+                
+            </div>
+
+            <div class="label-card">
+            
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#Android开发" title="Category: Android开发" rel="category">Android开发</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+            </div>
+
+            <div class="label-card">
+            
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <!--a href="/tag/#Android" title="Tag: Android" rel="tag">Android</a-->
+        <a href="/tag/#Android" title="Tag: Android" rel="tag">Android</a>&nbsp;
+    
+        <!--a href="/tag/#%E5%86%85%E7%BD%AE%E8%AF%AD%E8%A8%80%E5%88%87%E6%8D%A2" title="Tag: 内置语言切换" rel="tag">内置语言切换</a-->
+        <a href="/tag/#内置语言切换" title="Tag: 内置语言切换" rel="tag">内置语言切换</a>
+    
+  
+
+</span>
+
+            </div>
+
+        </div>
+        <hr>
+        <article itemscope itemtype="http://schema.org/BlogPosting">
+        <ul id="markdown-toc">
+  <li><a href="#一需求" id="markdown-toc-一需求">一、需求</a></li>
+  <li><a href="#二实现效果" id="markdown-toc-二实现效果">二、实现效果</a></li>
+  <li><a href="#三实现" id="markdown-toc-三实现">三、实现</a>    <ul>
+      <li><a href="#一添加多种语言的资源文件夹及文件" id="markdown-toc-一添加多种语言的资源文件夹及文件">（一）添加多种语言的资源文件夹及文件</a></li>
+      <li><a href="#二布局文件" id="markdown-toc-二布局文件">（二）布局文件</a></li>
+      <li><a href="#三localeutils" id="markdown-toc-三localeutils">（三）LocaleUtils</a></li>
+      <li><a href="#四activity" id="markdown-toc-四activity">（四）Activity</a></li>
+      <li><a href="#五application" id="markdown-toc-五application">（五）Application</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="一需求">一、需求</h2>
+
+<blockquote>
+  <p>有时候应用需要在内部切换语言但又不影响系统的语言，比如是应用现在是中文的，系统语言也是中文的，我把应用的切换成英文显示后系统语言还是中文的，系统语言切换后也不会被改变，还有就是有些机的系统是被改造精简过的，比如有些国产机的系统的语言就被精简剩中文和英文。支付宝、微信、Top Story都有在应用内部设置语言切换这样的功能。
+<img src="/images/AndroidInnerSwitchLanguage/搜狗截图20170208211755.png" alt="运行结果截图" /><br /></p>
+</blockquote>
+
+<h2 id="二实现效果">二、实现效果</h2>
+
+<blockquote>
+  <p>先看看实现效果吧。</p>
+</blockquote>
+
+<p><img src="/images/AndroidInnerSwitchLanguage/2017-1-22230953.gif" alt="运行结果截图" /><br /></p>
+
+<h2 id="三实现">三、实现</h2>
+
+<h3 id="一添加多种语言的资源文件夹及文件">（一）添加多种语言的资源文件夹及文件</h3>
+
+<blockquote>
+  <p>我这默认是英语再添加了个俄文(Google翻译的)和中文。</p>
+</blockquote>
+
+<p><img src="/images/AndroidInnerSwitchLanguage/QQ截图20170208213347.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>values/strings.xml</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;resources&gt;</span>  
+    <span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">"app_name"</span><span class="nt">&gt;</span>SwitchLanguage<span class="nt">&lt;/string&gt;</span>  
+    <span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">"helloworld"</span><span class="nt">&gt;</span>Hello World!<span class="nt">&lt;/string&gt;</span>  
+    <span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">"language"</span><span class="nt">&gt;</span>Eng<span class="nt">&lt;/string&gt;</span>  
+    <span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">"english"</span><span class="nt">&gt;</span>English<span class="nt">&lt;/string&gt;</span>  
+    <span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">"chinese"</span><span class="nt">&gt;</span>中文<span class="nt">&lt;/string&gt;</span>  
+    <span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">"russian"</span><span class="nt">&gt;</span>русский<span class="nt">&lt;/string&gt;</span>  
+    <span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">"secondact"</span><span class="nt">&gt;</span>Second Activity<span class="nt">&lt;/string&gt;</span>  
+<span class="nt">&lt;/resources&gt;</span>    
+</code></pre>
+</div>
+
+<blockquote>
+  <p>values-ru/strings.xml</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;resources&gt;</span>  
+    <span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">"app_name"</span><span class="nt">&gt;</span>Переключение язык<span class="nt">&lt;/string&gt;</span>  
+    <span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">"helloworld"</span><span class="nt">&gt;</span>привет мир!<span class="nt">&lt;/string&gt;</span>  
+    <span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">"language"</span><span class="nt">&gt;</span>русский<span class="nt">&lt;/string&gt;</span>  
+    <span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">"secondact"</span><span class="nt">&gt;</span>второй активность<span class="nt">&lt;/string&gt;</span>  
+<span class="nt">&lt;/resources&gt;</span>    
+</code></pre>
+</div>
+
+<blockquote>
+  <p>values-zh/strings.xm</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;resources&gt;</span>  
+    <span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">"app_name"</span><span class="nt">&gt;</span>切换语言<span class="nt">&lt;/string&gt;</span>  
+    <span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">"helloworld"</span><span class="nt">&gt;</span>你好 世界!<span class="nt">&lt;/string&gt;</span>  
+    <span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">"language"</span><span class="nt">&gt;</span>中文<span class="nt">&lt;/string&gt;</span>  
+    <span class="nt">&lt;string</span> <span class="na">name=</span><span class="s">"secondact"</span><span class="nt">&gt;</span>第二屏<span class="nt">&lt;/string&gt;</span>  
+<span class="nt">&lt;/resources&gt;</span>  
+</code></pre>
+</div>
+
+<h3 id="二布局文件">（二）布局文件</h3>
+
+<blockquote>
+  <p>activity_main.xml</p>
+</blockquote>
+
+<blockquote>
+  <p>默认标题栏的文字是切换语言后是不会被改变的，使用Toobar替换掉就可以了。</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>  
+<span class="nt">&lt;LinearLayout</span>  
+    <span class="na">android:id=</span><span class="s">"@+id/activity_main"</span>  
+    <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>  
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>  
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>  
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>  
+    <span class="na">android:orientation=</span><span class="s">"vertical"</span>  
+    <span class="na">tools:context=</span><span class="s">"com.ce.switchlanguage.MainActivity"</span>  
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span><span class="nt">&gt;</span>  
+    <span class="nt">&lt;android.support.design.widget.AppBarLayout</span>  
+        <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span>  
+        <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>  
+        <span class="na">android:theme=</span><span class="s">"@style/AppTheme.AppBarOverlay"</span><span class="nt">&gt;</span>  
+
+        <span class="nt">&lt;android.support.v7.widget.Toolbar</span>  
+            <span class="na">android:id=</span><span class="s">"@+id/toolbar"</span>  
+            <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>  
+            <span class="na">android:layout_height=</span><span class="s">"?attr/actionBarSize"</span>  
+            <span class="na">android:background=</span><span class="s">"?attr/colorPrimary"</span>  
+            <span class="na">app:popupTheme=</span><span class="s">"@style/AppTheme.PopupOverlay"</span>  
+            <span class="na">app:title=</span><span class="s">"@string/app_name"</span><span class="nt">/&gt;</span>  
+
+    <span class="nt">&lt;/android.support.design.widget.AppBarLayout&gt;</span>  
+    <span class="nt">&lt;TextView</span>  
+        <span class="na">android:layout_width=</span><span class="s">"wrap_content"</span>  
+        <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span>  
+        <span class="na">android:text=</span><span class="s">"@string/helloworld"</span><span class="nt">/&gt;</span>  
+    <span class="nt">&lt;Button</span>  
+        <span class="na">android:id=</span><span class="s">"@+id/change"</span>  
+        <span class="na">android:layout_width=</span><span class="s">"wrap_content"</span>  
+        <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span>  
+        <span class="na">android:layout_gravity=</span><span class="s">"center"</span>  
+        <span class="na">android:text=</span><span class="s">"@string/language"</span><span class="nt">/&gt;</span>  
+<span class="nt">&lt;/LinearLayout&gt;</span>    
+</code></pre>
+</div>
+
+<blockquote>
+  <p>styles.xml</p>
+</blockquote>
+
+<blockquote>
+  <p>设置语言后需要重启下activity，启动会有个效果，使用windowDisablePreview屏蔽掉它。</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;resources&gt;</span>  
+    <span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">"AppTheme"</span> <span class="na">parent=</span><span class="s">"Theme.AppCompat.Light.DarkActionBar"</span><span class="nt">&gt;</span>  
+        <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">"colorPrimary"</span><span class="nt">&gt;</span>@color/colorPrimary<span class="nt">&lt;/item&gt;</span>  
+        <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">"colorPrimaryDark"</span><span class="nt">&gt;</span>@color/colorPrimaryDark<span class="nt">&lt;/item&gt;</span>  
+        <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">"colorAccent"</span><span class="nt">&gt;</span>@color/colorAccent<span class="nt">&lt;/item&gt;</span>  
+        <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">"windowActionBar"</span><span class="nt">&gt;</span>false<span class="nt">&lt;/item&gt;</span>  
+        <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">"windowNoTitle"</span><span class="nt">&gt;</span>true<span class="nt">&lt;/item&gt;</span>  
+        <span class="nt">&lt;item</span> <span class="na">name=</span><span class="s">"android:windowDisablePreview"</span><span class="nt">&gt;</span>true<span class="nt">&lt;/item&gt;</span>  
+    <span class="nt">&lt;/style&gt;</span>  
+    <span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">"AppTheme.AppBarOverlay"</span> <span class="na">parent=</span><span class="s">"ThemeOverlay.AppCompat.Dark.ActionBar"</span><span class="nt">/&gt;</span>  
+    <span class="nt">&lt;style</span> <span class="na">name=</span><span class="s">"AppTheme.PopupOverlay"</span> <span class="na">parent=</span><span class="s">"ThemeOverlay.AppCompat.Dark"</span><span class="nt">/&gt;</span>  
+<span class="nt">&lt;/resources&gt;</span>   
+</code></pre>
+</div>
+
+<blockquote>
+  <p>main_menu.xml</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>  
+<span class="nt">&lt;menu</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>  
+      <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span><span class="nt">&gt;</span>  
+    <span class="nt">&lt;item</span> <span class="na">android:id=</span><span class="s">"@+id/chinese"</span> <span class="na">android:title=</span><span class="s">"@string/chinese"</span> <span class="na">app:showAsAction=</span><span class="s">"never"</span> <span class="nt">/&gt;</span>  
+    <span class="nt">&lt;item</span> <span class="na">android:id=</span><span class="s">"@+id/english"</span> <span class="na">android:title=</span><span class="s">"@string/english"</span> <span class="na">app:showAsAction=</span><span class="s">"never"</span> <span class="nt">/&gt;</span>  
+    <span class="nt">&lt;item</span> <span class="na">android:id=</span><span class="s">"@+id/russian"</span> <span class="na">android:title=</span><span class="s">"@string/russian"</span> <span class="na">app:showAsAction=</span><span class="s">"never"</span> <span class="nt">/&gt;</span>  
+<span class="nt">&lt;/menu&gt;</span>  
+</code></pre>
+</div>
+
+<h3 id="三localeutils">（三）LocaleUtils</h3>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">ce</span><span class="o">.</span><span class="na">switchlanguage</span><span class="o">;</span>  
+
+<span class="kn">import</span> <span class="nn">android.content.Context</span><span class="o">;</span>  
+<span class="kn">import</span> <span class="nn">android.content.SharedPreferences</span><span class="o">;</span>  
+<span class="kn">import</span> <span class="nn">android.content.res.Configuration</span><span class="o">;</span>  
+<span class="kn">import</span> <span class="nn">android.os.Build</span><span class="o">;</span>  
+<span class="kn">import</span> <span class="nn">android.util.DisplayMetrics</span><span class="o">;</span>  
+
+<span class="kn">import</span> <span class="nn">com.google.gson.Gson</span><span class="o">;</span>  
+
+<span class="kn">import</span> <span class="nn">java.util.Locale</span><span class="o">;</span>  
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">LocaleUtils</span> <span class="o">{</span>  
+    <span class="cm">/**
+     * 中文
+     */</span>  
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Locale</span> <span class="n">LOCALE_CHINESE</span> <span class="o">=</span> <span class="n">Locale</span><span class="o">.</span><span class="na">CHINESE</span><span class="o">;</span>  
+    <span class="cm">/**
+     * 英文
+     */</span>  
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Locale</span> <span class="n">LOCALE_ENGLISH</span> <span class="o">=</span> <span class="n">Locale</span><span class="o">.</span><span class="na">ENGLISH</span><span class="o">;</span>  
+    <span class="cm">/**
+     * 俄文
+     */</span>  
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Locale</span> <span class="n">LOCALE_RUSSIAN</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Locale</span><span class="o">(</span><span class="s">"ru"</span><span class="o">);</span>  
+    <span class="cm">/**
+     * 保存SharedPreferences的文件名
+     */</span>  
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">LOCALE_FILE</span> <span class="o">=</span> <span class="s">"LOCALE_FILE"</span><span class="o">;</span>  
+    <span class="cm">/**
+     * 保存Locale的key
+     */</span>  
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">LOCALE_KEY</span> <span class="o">=</span> <span class="s">"LOCALE_KEY"</span><span class="o">;</span>  
+
+    <span class="cm">/**
+     * 获取用户设置的Locale
+     * @param pContext Context
+     * @return Locale
+     */</span>  
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Locale</span> <span class="nf">getUserLocale</span><span class="o">(</span><span class="n">Context</span> <span class="n">pContext</span><span class="o">)</span> <span class="o">{</span>  
+        <span class="n">SharedPreferences</span> <span class="n">_SpLocale</span> <span class="o">=</span> <span class="n">pContext</span><span class="o">.</span><span class="na">getSharedPreferences</span><span class="o">(</span><span class="n">LOCALE_FILE</span><span class="o">,</span> <span class="n">Context</span><span class="o">.</span><span class="na">MODE_PRIVATE</span><span class="o">);</span>  
+        <span class="n">String</span> <span class="n">_LocaleJson</span> <span class="o">=</span> <span class="n">_SpLocale</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="n">LOCALE_KEY</span><span class="o">,</span> <span class="s">""</span><span class="o">);</span>  
+        <span class="k">return</span> <span class="nf">jsonToLocale</span><span class="o">(</span><span class="n">_LocaleJson</span><span class="o">);</span>  
+    <span class="o">}</span>  
+    <span class="cm">/**
+     * 获取当前的Locale
+     * @param pContext Context
+     * @return Locale
+     */</span>  
+    <span class="kd">public</span> <span class="kd">static</span> <span class="n">Locale</span> <span class="nf">getCurrentLocale</span><span class="o">(</span><span class="n">Context</span> <span class="n">pContext</span><span class="o">)</span> <span class="o">{</span>  
+        <span class="n">Locale</span> <span class="n">_Locale</span><span class="o">;</span>  
+        <span class="k">if</span> <span class="o">(</span><span class="n">Build</span><span class="o">.</span><span class="na">VERSION</span><span class="o">.</span><span class="na">SDK_INT</span> <span class="o">&gt;=</span> <span class="n">Build</span><span class="o">.</span><span class="na">VERSION_CODES</span><span class="o">.</span><span class="na">N</span><span class="o">)</span> <span class="o">{</span> <span class="c1">//7.0有多语言设置获取顶部的语言  </span>
+            <span class="n">_Locale</span> <span class="o">=</span> <span class="n">pContext</span><span class="o">.</span><span class="na">getResources</span><span class="o">().</span><span class="na">getConfiguration</span><span class="o">().</span><span class="na">getLocales</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>  
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>  
+            <span class="n">_Locale</span> <span class="o">=</span> <span class="n">pContext</span><span class="o">.</span><span class="na">getResources</span><span class="o">().</span><span class="na">getConfiguration</span><span class="o">().</span><span class="na">locale</span><span class="o">;</span>  
+        <span class="o">}</span>  
+        <span class="k">return</span> <span class="n">_Locale</span><span class="o">;</span>  
+    <span class="o">}</span>  
+    <span class="cm">/**
+     * 保存用户设置的Locale
+     * @param pContext Context
+     * @param pUserLocale Locale
+     */</span>  
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">saveUserLocale</span><span class="o">(</span><span class="n">Context</span> <span class="n">pContext</span><span class="o">,</span> <span class="n">Locale</span> <span class="n">pUserLocale</span><span class="o">)</span> <span class="o">{</span>  
+        <span class="n">SharedPreferences</span> <span class="n">_SpLocal</span><span class="o">=</span><span class="n">pContext</span><span class="o">.</span><span class="na">getSharedPreferences</span><span class="o">(</span><span class="n">LOCALE_FILE</span><span class="o">,</span> <span class="n">Context</span><span class="o">.</span><span class="na">MODE_PRIVATE</span><span class="o">);</span>  
+        <span class="n">SharedPreferences</span><span class="o">.</span><span class="na">Editor</span> <span class="n">_Edit</span><span class="o">=</span><span class="n">_SpLocal</span><span class="o">.</span><span class="na">edit</span><span class="o">();</span>  
+        <span class="n">String</span> <span class="n">_LocaleJson</span> <span class="o">=</span> <span class="n">localeToJson</span><span class="o">(</span><span class="n">pUserLocale</span><span class="o">);</span>  
+        <span class="n">_Edit</span><span class="o">.</span><span class="na">putString</span><span class="o">(</span><span class="n">LOCALE_KEY</span><span class="o">,</span> <span class="n">_LocaleJson</span><span class="o">);</span>  
+        <span class="n">_Edit</span><span class="o">.</span><span class="na">apply</span><span class="o">();</span>  
+    <span class="o">}</span>  
+    <span class="cm">/**
+     * Locale转成json
+     * @param pUserLocale UserLocale
+     * @return json String
+     */</span>  
+    <span class="kd">private</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">localeToJson</span><span class="o">(</span><span class="n">Locale</span> <span class="n">pUserLocale</span><span class="o">)</span> <span class="o">{</span>  
+        <span class="n">Gson</span> <span class="n">_Gson</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Gson</span><span class="o">();</span>  
+        <span class="k">return</span> <span class="n">_Gson</span><span class="o">.</span><span class="na">toJson</span><span class="o">(</span><span class="n">pUserLocale</span><span class="o">);</span>  
+    <span class="o">}</span>  
+    <span class="cm">/**
+     * json转成Locale
+     * @param pLocaleJson LocaleJson
+     * @return Locale
+     */</span>  
+    <span class="kd">private</span> <span class="kd">static</span> <span class="n">Locale</span> <span class="nf">jsonToLocale</span><span class="o">(</span><span class="n">String</span> <span class="n">pLocaleJson</span><span class="o">)</span> <span class="o">{</span>  
+        <span class="n">Gson</span> <span class="n">_Gson</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Gson</span><span class="o">();</span>  
+        <span class="k">return</span> <span class="n">_Gson</span><span class="o">.</span><span class="na">fromJson</span><span class="o">(</span><span class="n">pLocaleJson</span><span class="o">,</span> <span class="n">Locale</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>  
+    <span class="o">}</span>  
+    <span class="cm">/**
+     * 更新Locale
+     * @param pContext Context
+     * @param pNewUserLocale New User Locale
+     */</span>  
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">updateLocale</span><span class="o">(</span><span class="n">Context</span> <span class="n">pContext</span><span class="o">,</span> <span class="n">Locale</span> <span class="n">pNewUserLocale</span><span class="o">)</span> <span class="o">{</span>  
+        <span class="k">if</span> <span class="o">(</span><span class="n">needUpdateLocale</span><span class="o">(</span><span class="n">pContext</span><span class="o">,</span> <span class="n">pNewUserLocale</span><span class="o">))</span> <span class="o">{</span>  
+            <span class="n">Configuration</span> <span class="n">_Configuration</span> <span class="o">=</span> <span class="n">pContext</span><span class="o">.</span><span class="na">getResources</span><span class="o">().</span><span class="na">getConfiguration</span><span class="o">();</span>  
+            <span class="k">if</span> <span class="o">(</span><span class="n">Build</span><span class="o">.</span><span class="na">VERSION</span><span class="o">.</span><span class="na">SDK_INT</span> <span class="o">&gt;=</span> <span class="n">Build</span><span class="o">.</span><span class="na">VERSION_CODES</span><span class="o">.</span><span class="na">JELLY_BEAN_MR1</span><span class="o">)</span> <span class="o">{</span>  
+                <span class="n">_Configuration</span><span class="o">.</span><span class="na">setLocale</span><span class="o">(</span><span class="n">pNewUserLocale</span><span class="o">);</span>  
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>  
+                <span class="n">_Configuration</span><span class="o">.</span><span class="na">locale</span> <span class="o">=</span><span class="n">pNewUserLocale</span><span class="o">;</span>  
+            <span class="o">}</span>  
+            <span class="n">DisplayMetrics</span> <span class="n">_DisplayMetrics</span> <span class="o">=</span> <span class="n">pContext</span><span class="o">.</span><span class="na">getResources</span><span class="o">().</span><span class="na">getDisplayMetrics</span><span class="o">();</span>  
+            <span class="n">pContext</span><span class="o">.</span><span class="na">getResources</span><span class="o">().</span><span class="na">updateConfiguration</span><span class="o">(</span><span class="n">_Configuration</span><span class="o">,</span> <span class="n">_DisplayMetrics</span><span class="o">);</span>  
+            <span class="n">saveUserLocale</span><span class="o">(</span><span class="n">pContext</span><span class="o">,</span> <span class="n">pNewUserLocale</span><span class="o">);</span>  
+        <span class="o">}</span>  
+    <span class="o">}</span>  
+    <span class="cm">/**
+     * 判断需不需要更新
+     * @param pContext Context
+     * @param pNewUserLocale New User Locale
+     * @return true / false
+     */</span>  
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">needUpdateLocale</span><span class="o">(</span><span class="n">Context</span> <span class="n">pContext</span><span class="o">,</span> <span class="n">Locale</span> <span class="n">pNewUserLocale</span><span class="o">)</span> <span class="o">{</span>  
+        <span class="k">return</span> <span class="n">pNewUserLocale</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">getCurrentLocale</span><span class="o">(</span><span class="n">pContext</span><span class="o">).</span><span class="na">equals</span><span class="o">(</span><span class="n">pNewUserLocale</span><span class="o">);</span>  
+    <span class="o">}</span>  
+<span class="o">}</span>  
+
+</code></pre>
+</div>
+
+<blockquote>
+  <p>Locale工具类，这里我用SharedPreferences来保存所设置的Locale，Locale是实现了Serializable的。</p>
+</blockquote>
+
+<h3 id="四activity">（四）Activity</h3>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">ce</span><span class="o">.</span><span class="na">switchlanguage</span><span class="o">;</span>  
+
+<span class="kn">import</span> <span class="nn">android.content.Intent</span><span class="o">;</span>  
+<span class="kn">import</span> <span class="nn">android.os.Bundle</span><span class="o">;</span>  
+<span class="kn">import</span> <span class="nn">android.support.v7.app.AppCompatActivity</span><span class="o">;</span>  
+<span class="kn">import</span> <span class="nn">android.support.v7.widget.Toolbar</span><span class="o">;</span>  
+<span class="kn">import</span> <span class="nn">android.view.Menu</span><span class="o">;</span>  
+<span class="kn">import</span> <span class="nn">android.view.MenuItem</span><span class="o">;</span>  
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MainActivity</span> <span class="kd">extends</span> <span class="n">AppCompatActivity</span> <span class="o">{</span>  
+
+    <span class="nd">@Override</span>  
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>  
+        <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>  
+        <span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_main</span><span class="o">);</span>  
+        <span class="n">Toolbar</span> <span class="n">_Toolbar</span> <span class="o">=(</span><span class="n">Toolbar</span><span class="o">)</span> <span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">toolbar</span><span class="o">);</span>  
+        <span class="n">setSupportActionBar</span><span class="o">(</span><span class="n">_Toolbar</span><span class="o">);</span>  
+    <span class="o">}</span>  
+
+    <span class="nd">@Override</span>  
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">onCreateOptionsMenu</span><span class="o">(</span><span class="n">Menu</span> <span class="n">menu</span><span class="o">)</span> <span class="o">{</span>  
+        <span class="n">getMenuInflater</span><span class="o">().</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">menu</span><span class="o">.</span><span class="na">main_menu</span><span class="o">,</span><span class="n">menu</span><span class="o">);</span>  
+        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>  
+    <span class="o">}</span>  
+
+    <span class="nd">@Override</span>  
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">onOptionsItemSelected</span><span class="o">(</span><span class="n">MenuItem</span> <span class="n">item</span><span class="o">)</span> <span class="o">{</span>  
+        <span class="kt">int</span> <span class="n">_ItemId</span><span class="o">=</span><span class="n">item</span><span class="o">.</span><span class="na">getItemId</span><span class="o">();</span>  
+        <span class="k">switch</span> <span class="o">(</span><span class="n">_ItemId</span><span class="o">)</span> <span class="o">{</span>  
+            <span class="k">case</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">chinese</span><span class="o">:</span>  
+                <span class="k">if</span> <span class="o">(</span><span class="n">LocaleUtils</span><span class="o">.</span><span class="na">needUpdateLocale</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">LocaleUtils</span><span class="o">.</span><span class="na">LOCALE_CHINESE</span><span class="o">))</span> <span class="o">{</span>  
+                    <span class="n">LocaleUtils</span><span class="o">.</span><span class="na">updateLocale</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">LocaleUtils</span><span class="o">.</span><span class="na">LOCALE_CHINESE</span><span class="o">);</span>  
+                    <span class="n">restartAct</span><span class="o">();</span>  
+                <span class="o">}</span>  
+               <span class="k">break</span><span class="o">;</span>  
+            <span class="k">case</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">english</span><span class="o">:</span>  
+                <span class="k">if</span> <span class="o">(</span><span class="n">LocaleUtils</span><span class="o">.</span><span class="na">needUpdateLocale</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">LocaleUtils</span><span class="o">.</span><span class="na">LOCALE_ENGLISH</span><span class="o">))</span> <span class="o">{</span>  
+                    <span class="n">LocaleUtils</span><span class="o">.</span><span class="na">updateLocale</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">LocaleUtils</span><span class="o">.</span><span class="na">LOCALE_ENGLISH</span><span class="o">);</span>  
+                    <span class="n">restartAct</span><span class="o">();</span>  
+                <span class="o">}</span>  
+                <span class="k">break</span><span class="o">;</span>  
+            <span class="k">case</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">russian</span><span class="o">:</span>  
+                <span class="k">if</span> <span class="o">(</span><span class="n">LocaleUtils</span><span class="o">.</span><span class="na">needUpdateLocale</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">LocaleUtils</span><span class="o">.</span><span class="na">LOCALE_RUSSIAN</span><span class="o">))</span> <span class="o">{</span>  
+                    <span class="n">LocaleUtils</span><span class="o">.</span><span class="na">updateLocale</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">LocaleUtils</span><span class="o">.</span><span class="na">LOCALE_RUSSIAN</span><span class="o">);</span>  
+                    <span class="n">restartAct</span><span class="o">();</span>  
+                <span class="o">}</span>  
+        <span class="o">}</span>  
+        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>  
+    <span class="o">}</span>  
+
+    <span class="cm">/**
+     * 重启当前Activity
+     */</span>  
+    <span class="kd">private</span> <span class="kt">void</span> <span class="nf">restartAct</span><span class="o">()</span> <span class="o">{</span>  
+        <span class="n">finish</span><span class="o">();</span>  
+        <span class="n">Intent</span> <span class="n">_Intent</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Intent</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">MainActivity</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>  
+        <span class="n">startActivity</span><span class="o">(</span><span class="n">_Intent</span><span class="o">);</span>  
+        <span class="c1">//清除Activity退出和进入的动画  </span>
+        <span class="n">overridePendingTransition</span><span class="o">(</span><span class="mi">0</span><span class="o">,</span> <span class="mi">0</span><span class="o">);</span>  
+    <span class="o">}</span>  
+<span class="o">}</span>  
+</code></pre>
+</div>
+
+<blockquote>
+  <p>这里只有一个Activity所以切换的时候重启下当前Activity就好了，栈里还有其他Activity的自己再处理吧。</p>
+</blockquote>
+
+<h3 id="五application">（五）Application</h3>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">ce</span><span class="o">.</span><span class="na">switchlanguage</span><span class="o">;</span>  
+
+<span class="kn">import</span> <span class="nn">android.app.Application</span><span class="o">;</span>  
+<span class="kn">import</span> <span class="nn">android.content.res.Configuration</span><span class="o">;</span>  
+<span class="kn">import</span> <span class="nn">android.os.Build</span><span class="o">;</span>  
+
+<span class="kn">import</span> <span class="nn">java.util.Locale</span><span class="o">;</span>  
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyApplication</span> <span class="kd">extends</span> <span class="n">Application</span> <span class="o">{</span>  
+    <span class="nd">@Override</span>  
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">()</span> <span class="o">{</span>  
+        <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">();</span>  
+        <span class="n">Locale</span> <span class="n">_UserLocale</span><span class="o">=</span><span class="n">LocaleUtils</span><span class="o">.</span><span class="na">getUserLocale</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>  
+        <span class="n">LocaleUtils</span><span class="o">.</span><span class="na">updateLocale</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">_UserLocale</span><span class="o">);</span>  
+    <span class="o">}</span>  
+
+    <span class="nd">@Override</span>  
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onConfigurationChanged</span><span class="o">(</span><span class="n">Configuration</span> <span class="n">newConfig</span><span class="o">)</span> <span class="o">{</span>  
+        <span class="kd">super</span><span class="o">.</span><span class="na">onConfigurationChanged</span><span class="o">(</span><span class="n">newConfig</span><span class="o">);</span>  
+        <span class="n">Locale</span> <span class="n">_UserLocale</span><span class="o">=</span><span class="n">LocaleUtils</span><span class="o">.</span><span class="na">getUserLocale</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>  
+        <span class="c1">//系统语言改变了应用保持之前设置的语言  </span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">_UserLocale</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>  
+            <span class="n">Locale</span><span class="o">.</span><span class="na">setDefault</span><span class="o">(</span><span class="n">_UserLocale</span><span class="o">);</span>  
+            <span class="n">Configuration</span> <span class="n">_Configuration</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Configuration</span><span class="o">(</span><span class="n">newConfig</span><span class="o">);</span>  
+            <span class="k">if</span> <span class="o">(</span><span class="n">Build</span><span class="o">.</span><span class="na">VERSION</span><span class="o">.</span><span class="na">SDK_INT</span> <span class="o">&gt;=</span> <span class="n">Build</span><span class="o">.</span><span class="na">VERSION_CODES</span><span class="o">.</span><span class="na">JELLY_BEAN_MR1</span><span class="o">)</span> <span class="o">{</span>  
+                <span class="n">_Configuration</span><span class="o">.</span><span class="na">setLocale</span><span class="o">(</span><span class="n">_UserLocale</span><span class="o">);</span>  
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>  
+                <span class="n">_Configuration</span><span class="o">.</span><span class="na">locale</span> <span class="o">=</span><span class="n">_UserLocale</span><span class="o">;</span>  
+            <span class="o">}</span>  
+            <span class="n">getResources</span><span class="o">().</span><span class="na">updateConfiguration</span><span class="o">(</span><span class="n">_Configuration</span><span class="o">,</span> <span class="n">getResources</span><span class="o">().</span><span class="na">getDisplayMetrics</span><span class="o">());</span>  
+        <span class="o">}</span>  
+    <span class="o">}</span>  
+<span class="o">}</span>  
+</code></pre>
+</div>
+
+<blockquote>
+  <p>在Application onCreate的时候更新下，在系统语言改变的时候也要保持之前设置的语言不变。</p>
+</blockquote>
+
+<ul>
+  <li><strong><a href="https://github.com/cekiasoo/SwitchLanguage">源码地址</a></strong></li>
+</ul>
+
+        </article>
+        <hr>
+
+        
+        
+            
+            
+                
+                    
+                        
+                        <h2 id="similar_posts">Similar Posts</h2>
+                        <ul>
+                        
+                        <li class="relatedPost">
+                            <a href="/2018/04/03/AndroidAlertDialog/">Android 按 AlertDialog 的确定按钮对话框不关闭的方法
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/04/27/LeakcanaryForEclipse/">Android 在 Eclipse 项目中使用 Leakcanary 进行内存泄露检测
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/03/26/AndroidBluetoothAdapterStartDiscovery/">Android 6.0 BluetoothAdapter.startDiscovery()扫描不到蓝牙的问题分析及解决
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/03/05/CountDownTimer/">Android 倒计时 CountDownTimer 的使用和封装及改进
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+        
+        
+            </ul>
+        
+
+        <div class="post-recent">
+    <div class="pre">
+        
+    </div>
+    <div class="nex">
+
+        
+        <p><strong>下一篇</strong> <a href="/2017/03/05/CountDownTimer/">Android 倒计时 CountDownTimer 的使用和封装及改进</a></p>
+        
+    </div>
+</div>
+
+
+        <h2 id="comments">Comments</h2>
+        
+
+
+
+
+
+    </div>
+    <button class="anchor"><i class="fa fa-anchor"></i></button>
+    <div class="right">
+        <div class="wrap">
+
+            <!-- Content -->
+            <div class="side content">
+                <div>
+                    Content
+                </div>
+                <ul id="content-side" class="content-ul">
+                    
+                    <li><a href="#similar_posts">Similar Posts</a></li>
+                    
+                    <li><a href="#comments">Comments</a></li>
+                </ul>
+            </div>
+            <!-- 其他div框放到这里 -->
+            <!-- <div class="side">bbbb</div> -->
+        </div>
+    </div>
+</div>
+<script>
+/**
+ * target _blank
+ */
+(function() {
+    var aTags = document.querySelectorAll('article a:not([id])')
+    for (var i = 0; i < aTags.length; i++) {
+        aTags[i].setAttribute('target', '_blank')
+    }
+}());
+</script>
+<script src="/js/pageContent.js " charset="utf-8"></script>
+
+
+    <footer class="site-footer">
+
+
+    <div class="wrapper">
+
+        <p class="description">
+             来自 cekiasoo 的个人 blog！ 
+        </p>
+        <p class="contact">
+            Contact me at: 
+            <a href="https://github.com/cekiasoo" title="GitHub"><i class="fa fa-github" aria-hidden="true"></i></a>  
+            <a href="mailto:cekasoo@163.com" title="email"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>  
+            <a href="http://weibo.com/u/2064454407" title="Weibo"><i class="fa fa-weibo" aria-hidden="true"></i></a>   
+            <a href="https://twitter.com/cekiasoo" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>  
+            <a href="https://www.facebook.com/cekiasoo" title="Facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i></a>    
+        </p>
+        <p>
+            本站总访问量<span id="busuanzi_value_site_pv"></span>次，本站访客数<span id="busuanzi_value_site_uv"></span>人次，本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+        </p>
+        <p class="power">
+            <span>
+                Site powered by <a href="https://jekyllrb.com/">Jekyll</a> & <a href="https://pages.github.com/">Github Pages</a>.
+            </span>
+            <span>
+                Theme designed by <a href="https://github.com/cekiasoo">cekiasoo</a>.
+            </span>
+        </p>
+    </div>
+</footer>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <div class="back-to-top">
+    <a href="#top" data-scroll>
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    </a>
+</div>
+
+    <script src=" /js/main.js " charset="utf-8"></script>
+    <script src=" /js/smooth-scroll.min.js " charset="utf-8"></script>
+    <script type="text/javascript">
+      smoothScroll.init({
+        speed: 500, // Integer. How fast to complete the scroll in milliseconds
+        easing: 'easeInOutCubic', // Easing pattern to use
+        offset: 20, // Integer. How far to offset the scrolling anchor location in pixels
+      });
+    </script>
+    <!-- <script src=" /js/scroll.min.js " charset="utf-8"></script> -->
+  </body>
+
+</html>
