@@ -5,8 +5,8 @@
     <description></description>
     <link>http://localhost:4001/</link>
     <atom:link href="http://localhost:4001/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Thu, 21 Jun 2018 11:26:28 +0800</pubDate>
-    <lastBuildDate>Thu, 21 Jun 2018 11:26:28 +0800</lastBuildDate>
+    <pubDate>Thu, 21 Jun 2018 12:29:19 +0800</pubDate>
+    <lastBuildDate>Thu, 21 Jun 2018 12:29:19 +0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
     
       <item>
@@ -135,6 +135,36 @@
         
         
         <category>Android开发</category>
+        
+      </item>
+    
+      <item>
+        <title>Android 自定义控件 仿支付宝芝麻信用的刻度盘</title>
+        <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#一前言&quot; id=&quot;markdown-toc-一前言&quot;&gt;一、前言&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;一前言&quot;&gt;一、前言&lt;/h2&gt;
+
+&lt;blockquote&gt;
+  最近在看芝麻信用的时候突发奇想自己做一个芝麻信用的界面然后可以用来装装逼，可惜的是把支付宝解开来没发现相关的界面图片，虽然是这样但也不影响到咱的动手能力，好了，进入正题。
+&lt;/blockquote&gt;
+
+</description>
+        <pubDate>Sun, 19 Feb 2017 00:00:00 +0800</pubDate>
+        <link>http://localhost:4001/2017/02/19/Android-Custom-View-SesameCredit/</link>
+        <guid isPermaLink="true">http://localhost:4001/2017/02/19/Android-Custom-View-SesameCredit/</guid>
+        
+        <category>Android</category>
+        
+        <category>自定义控件</category>
+        
+        <category>刻度盘</category>
+        
+        
+        <category>Android开发</category>
+        
+        <category>Android自定义控件</category>
         
       </item>
     
