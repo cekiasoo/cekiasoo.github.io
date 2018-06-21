@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Android Navigation Architecture Component 使用详解</title>
+    <meta name="description" content="  一、Navigation 是什么一、Navigation 是什么  Navigation 是 Google 新推出的库，其作用简单的说就是用于简化界面间跳转的，Activity 和 Fragment 都可以 [ Google Navigation 官方文档 ]  [ Google 官方 Navigation ...">
+
+    <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://at.alicdn.com/t/font_8v3czwksspqlg14i.css">
+    <link rel="stylesheet" href="/css/main.css ">
+    <link rel="canonical" href="http://localhost:4001/2018/06/19/Android-Navigation-Architecture-Component/">
+    <link rel="alternate" type="application/rss+xml" title="cekiasoo's blog" href="http://localhost:4001/feed.xml ">
+
+
+    <script>
+    // 百度统计代码
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?44057784c9cb1a12f1f7fcb6ae5c0237";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+
+
+</head>
+
+
+  <body>
+
+    <header id="top">
+    <div class="wrapper">
+        <a href="/" class="brand">cekiasoo's blog</a>
+        <small>Android Coder</small>
+        <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
+        <nav id="headerNav">
+            <ul>
+                <li>
+                    
+                    <a href="/">
+                    
+                        <i class="fa fa-home"></i>Home
+                    </a>
+                </li>
+
+                
+                    
+                    <li>
+                        
+                        <a href="/archive/">
+                        
+                            <i class="fa fa-archive"></i>Archives
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/category/">
+                        
+                            <i class="fa fa-th-list"></i>Categories
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/tag/">
+                        
+                            <i class="fa fa-tags"></i>Tags
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/about/">
+                        
+                            <i class="fa fa-heart"></i>About
+                        </a>
+                    </li>
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+        <div class="page clearfix" post>
+    <div class="left">
+        <h1>Android Navigation Architecture Component 使用详解</h1>
+        <div class="label">
+
+            <div class="label-card">
+                <i class="fa fa-calendar"></i>2018-06-19
+            </div>
+
+            <div class="label-card">
+                <i class="fa fa-user"></i>cekiasoo
+                
+            </div>
+            <div class="label-card">
+                <p>阅读：<span id="busuanzi_value_page_pv"></span></p>
+            </div>
+            <div class="label-card">
+                
+            </div>
+
+            <div class="label-card">
+            
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#Android开发" title="Category: Android开发" rel="category">Android开发</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+            </div>
+
+            <div class="label-card">
+            
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <!--a href="/tag/#Android" title="Tag: Android" rel="tag">Android</a-->
+        <a href="/tag/#Android" title="Tag: Android" rel="tag">Android</a>&nbsp;
+    
+        <!--a href="/tag/#Navigation" title="Tag: Navigation" rel="tag">Navigation</a-->
+        <a href="/tag/#Navigation" title="Tag: Navigation" rel="tag">Navigation</a>
+    
+  
+
+</span>
+
+            </div>
+
+        </div>
+        <hr>
+        <article itemscope itemtype="http://schema.org/BlogPosting">
+        <ul id="markdown-toc">
+  <li><a href="#一navigation-是什么" id="markdown-toc-一navigation-是什么">一、Navigation 是什么</a></li>
+  <li><a href="#二准备工作" id="markdown-toc-二准备工作">二、准备工作</a></li>
+  <li><a href="#三navigation-的用法" id="markdown-toc-三navigation-的用法">三、Navigation 的用法</a>    <ul>
+      <li><a href="#一基本用法" id="markdown-toc-一基本用法">（一）基本用法</a></li>
+      <li><a href="#二界面间跳转" id="markdown-toc-二界面间跳转">（二）界面间跳转</a></li>
+      <li><a href="#三界面切换动画" id="markdown-toc-三界面切换动画">（三）界面切换动画</a></li>
+      <li><a href="#四数据传递" id="markdown-toc-四数据传递">（四）数据传递</a></li>
+      <li><a href="#五类型安全的方式传递数据" id="markdown-toc-五类型安全的方式传递数据">（五）类型安全的方式传递数据</a></li>
+      <li><a href="#六返回" id="markdown-toc-六返回">（六）返回</a></li>
+      <li><a href="#七与-toolbar-结合" id="markdown-toc-七与-toolbar-结合">（七）与 Toolbar 结合</a></li>
+      <li><a href="#八动态加载-navigation" id="markdown-toc-八动态加载-navigation">（八）动态加载 Navigation</a></li>
+      <li><a href="#九与-bottomnavigationview-相结合" id="markdown-toc-九与-bottomnavigationview-相结合">（九）与 BottomNavigationView 相结合</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="一navigation-是什么">一、Navigation 是什么</h2>
+
+<blockquote>
+  <p>Navigation 是 Google 新推出的库，其作用简单的说就是用于简化界面间跳转的，Activity 和 Fragment 都可以<a href="https://developer.android.google.cn/topic/libraries/architecture/navigation" target="_blank"> [ Google Navigation 官方文档 ] <a href="https://github.com/googlecodelabs/android-navigation" target="_blank"> [ Google 官方 Navigation Samples ] <a href="https://github.com/googlesamples/android-sunflower">[这个也是 Google 官方用了 Navigation 的 Samples]</a> 可以 checkout 下来看看，我在研究 Navigation 时也用 Navigation 随手做了小项目 <a href="https://github.com/cekiasoo/CEChat">[项目源码]</a>。</a></a></p>
+</blockquote>
+
+<h2 id="二准备工作">二、准备工作</h2>
+
+<blockquote>
+  <p>Navigation 是 Android Studio 3.2 才有的功能，所以要先下载 Android Studio 3.2, 目前 Android Studio 3.2 是预览版，正式版目前是 3.1.3，<br /><br /><a href="https://developer.android.google.cn/studio/preview/">[Androi Studio 3.2 下载页]</a>  <a href="https://dl.google.com/dl/android/studio/ide-zips/3.2.0.17/android-studio-ide-181.4830125-windows.zip">[Androi Studio 3.2 下载链接]</a><br /><br />
+<img src="/images/Android Navigation/搜狗截图20180617102747.png" alt="运行结果截图" /><br />
+<br />
+<img src="/images/Android Navigation/搜狗截图20180616211505.png" alt="运行结果截图" /><br /></p>
+</blockquote>
+
+<h2 id="三navigation-的用法">三、Navigation 的用法</h2>
+<h4 id="一基本用法">（一）基本用法</h4>
+<blockquote>
+  <p>下载完 Android Studio 3.2 后打开程序新建个项目，打开 app 下的 build.gradle 导入 Navigation <br /><br /></p>
+</blockquote>
+
+<div class="language-gradle highlighter-rouge"><pre class="highlight"><code><span class="k">dependencies</span> <span class="o">{</span>
+    <span class="n">implementation</span> <span class="s2">"android.arch.navigation:navigation-fragment:1.0.0-alpha02"</span>
+    <span class="n">implementation</span> <span class="s2">"android.arch.navigation:navigation-ui:1.0.0-alpha02"</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>新建个Fragment</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FirstFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span> <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">fragment_simple_first</span><span class="o">,</span> <span class="n">container</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>布局</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;android.support.constraint.ConstraintLayout</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+    <span class="na">tools:context=</span><span class="s">".simple.FirstFragment"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextView</span>
+        <span class="na">android:layout_width=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span>
+        <span class="na">app:layout_constraintBottom_toBottomOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintLeft_toLeftOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintRight_toRightOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintTop_toTopOf=</span><span class="s">"parent"</span>
+        <span class="na">android:textSize=</span><span class="s">"30sp"</span>
+        <span class="na">android:text=</span><span class="s">"我是第一个 Fragment"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/android.support.constraint.ConstraintLayout&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>在 res 目录右键选择 New -&gt; Android Resource File <br /><br />
+<img src="/images/Android Navigation/搜狗截图20180616214215.png" alt="运行结果截图" /><br /><br />
+新建个 Navigation 资源文件<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180616214536.png" alt="运行结果截图" /><br /><br />
+新建完成就会在 res 目录下生成 navigation 目录和文件，就是下面那样的 根元素是 navigation <br /><br />
+<img src="/images/Android Navigation/搜狗截图20180617110522.png" alt="运行结果截图" /><br /><br />
+<img src="/images/Android Navigation/搜狗截图20180616214624.png" alt="运行结果截图" /><br /><br />
+接下来就把刚刚写的 Fragment 写进去，打上左尖括号 &lt; Android Studio 就会提示<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180617114735.png" alt="运行结果截图" /><br /><br />
+这里我们选择 fragment 标签，选择了 fragment 后再打个空格又有提示<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180616214647.png" alt="运行结果截图" /><br /><br />
+这里的 id 就像写布局的 id 那样需要给个 id 才能找到它，name 就是说明是哪个 Fragment 类名的，像下面那样<br /><br /></p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;navigation</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_simple_first_frag"</span>
+        <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.simple.FirstFragment"</span>
+        <span class="na">android:label=</span><span class="s">"first frag"</span> <span class="nt">&gt;</span>
+    <span class="nt">&lt;/fragment&gt;</span>
+<span class="nt">&lt;/navigation&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>这时可以点击下面的 Design 看一下<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180617121948.png" alt="运行结果截图" /><br /><br />
+<img src="/images/Android Navigation/搜狗截图20180617122356.png" alt="运行结果截图" /><br /><br />
+这什么呀，Preview Unavailable？ 预览不可用？（黑人问号脸），其实这里是少写了个 layout 的属性，Android Studio 也没提示，可能是预览版的还不够完善的原因，layout 属性是要用到 tools 的命名空间的，加上 layout 后如下，</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;navigation</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_simple_first_frag"</span>
+        <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.simple.FirstFragment"</span>
+        <span class="na">android:label=</span><span class="s">"first frag"</span>
+        <span class="na">tools:layout=</span><span class="s">"@layout/fragment_simple_first"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/fragment&gt;</span>
+<span class="nt">&lt;/navigation&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>再去 Design 看一下，这回就有了<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180617160243.png" alt="运行结果截图" /><br /><br />
+这里先告一段落了（顺便挖了个坑），现在去写 Activity 里的布局，Activity 的布局该怎么写？这里要用到 NavHost 来托管 Navigation，NavHost 是个接口，默认是用 NavHostFragment 来托管，NavHostFragment 是实现了 NavHost 接口的，进去 NavHostFragment 看一下</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * NavHostFragment provides an area within your layout for self-contained navigation to occur.
+ *
+ * &lt;p&gt;NavHostFragment is intended to be used as the content area within a layout resource
+ * defining your app's chrome around it, e.g.:&lt;/p&gt;
+ *
+ * &lt;pre class="prettyprint"&gt;
+ *     &lt;android.support.v4.widget.DrawerLayout
+ *             xmlns:android="http://schemas.android.com/apk/res/android"
+ *             xmlns:app="http://schemas.android.com/apk/res-auto"
+ *             android:layout_width="match_parent"
+ *             android:layout_height="match_parent"&gt;
+ *         &lt;fragment
+ *                 android:layout_width="match_parent"
+ *                 android:layout_height="match_parent"
+ *                 android:id="@+id/my_nav_host_fragment"
+ *                 android:name="androidx.navigation.fragment.NavHostFragment"
+ *                 app:navGraph="@xml/nav_sample"
+ *                 app:defaultNavHost="true" /&gt;
+ *         &lt;android.support.design.widget.NavigationView
+ *                 android:layout_width="wrap_content"
+ *                 android:layout_height="match_parent"
+ *                 android:layout_gravity="start"/&gt;
+ *     &lt;/android.support.v4.widget.DrawerLayout&gt;
+ * &lt;/pre&gt;
+ *
+ * &lt;p&gt;Each NavHostFragment has a {@link NavController} that defines valid navigation within
+ * the navigation host. This includes the {@link NavGraph navigation graph} as well as navigation
+ * state such as current location and back stack that will be saved and restored along with the
+ * NavHostFragment itself.&lt;/p&gt;
+ *
+ * &lt;p&gt;NavHostFragments register their navigation controller at the root of their view subtree
+ * such that any descendant can obtain the controller instance through the {@link Navigation}
+ * helper class's methods such as {@link Navigation#findNavController(View)}. View event listener
+ * implementations such as {@link android.view.View.OnClickListener} within navigation destination
+ * fragments can use these helpers to navigate based on user interaction without creating a tight
+ * coupling to the navigation host.&lt;/p&gt;
+ */</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">NavHostFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="kd">implements</span> <span class="n">NavHost</span> <span class="o">{</span>
+  <span class="o">......</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>哇，注释中怎么写都给我们准备好了，厉害厉害，我们拿来用就好了，我们先简单点</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;android.support.constraint.ConstraintLayout</span>
+    <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+    <span class="na">tools:context=</span><span class="s">".simple.SimpleActivity"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/frag_nav_simple"</span>
+        <span class="na">android:name=</span><span class="s">"androidx.navigation.fragment.NavHostFragment"</span>
+        <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+        <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+        <span class="na">app:navGraph=</span><span class="s">"@navigation/nav_simple"</span>
+        <span class="na">app:defaultNavHost=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/android.support.constraint.ConstraintLayout&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>navGraph 属性就是写刚才我们写的 nagation 文件，defaultNavHost 这个是和返回键相关的，和这一块相关的<a href="https://developer.android.google.cn/topic/libraries/architecture/navigation/navigation-implementing#Modify-activity">[官方文档]</a>，
+到这里可以去运行一下了，啥情况，咋崩溃了，刚才挖的什么坑，来看一下日志<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180617130506.png" alt="运行结果截图" /><br /><br />
+no start destination defined via app:startDestination for the root navigation 黑人问号脸，有没有注意过 navigation 文件的 navigation 标签有个警告，鼠标移上去也有提示 No start destination specified<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180617130901.png" alt="运行结果截图" /><br /><br />
+其实这里是要在 navigation 文件里指定是从哪里开始的，没有指定就会报错，因为不知道哪个是出发点，就像地图得知道起始位置和目的地才可以导航，修改一下 navigation 文件的内容，根 navigation 添加上 startDestination 属性，</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;navigation</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">app:startDestination=</span><span class="s">"@id/nav_simple_first_frag"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_simple_first_frag"</span>
+        <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.simple.FirstFragment"</span>
+        <span class="na">android:label=</span><span class="s">"first frag"</span>
+        <span class="na">tools:layout=</span><span class="s">"@layout/fragment_simple_first"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/fragment&gt;</span>
+<span class="nt">&lt;/navigation&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>再运行一下吧，这回不坑了，<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180617160718.png" alt="运行结果截图" /><br /><br /></p>
+  <h4 id="二界面间跳转">（二）界面间跳转</h4>
+  <p>一个 Fragment 怎么过瘾，再来个 Fragment</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SecondFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span> <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span>
+                             <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">fragment_simple_second</span><span class="o">,</span> <span class="n">container</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>布局</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;android.support.constraint.ConstraintLayout</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+    <span class="na">tools:context=</span><span class="s">".simple.SecondFragment"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextView</span>
+        <span class="na">android:layout_width=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:text=</span><span class="s">"我是第二个 Fragment"</span>
+        <span class="na">android:textSize=</span><span class="s">"30sp"</span>
+        <span class="na">app:layout_constraintBottom_toBottomOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintLeft_toLeftOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintRight_toRightOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintTop_toTopOf=</span><span class="s">"parent"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/android.support.constraint.ConstraintLayout&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>把第一个 Fragment 的布局也改一下，</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;android.support.constraint.ConstraintLayout</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+    <span class="na">tools:context=</span><span class="s">".simple.FirstFragment"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;android.support.v7.widget.AppCompatButton</span>
+        <span class="na">android:id=</span><span class="s">"@+id/btn_to_second_fragment"</span>
+        <span class="na">android:layout_width=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:text=</span><span class="s">"去第二个Fragment"</span>
+        <span class="na">android:textAllCaps=</span><span class="s">"false"</span>
+        <span class="na">app:layout_constraintBottom_toBottomOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintLeft_toLeftOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintRight_toRightOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintTop_toTopOf=</span><span class="s">"parent"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/android.support.constraint.ConstraintLayout&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>把第二个 Fragment 也添加到 Navigation 文件里，和第一个 Fragment 差不多</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;navigation</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">app:startDestination=</span><span class="s">"@id/nav_simple_first_frag"</span><span class="nt">&gt;</span>
+    ......
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_simple_second_frag"</span>
+        <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.simple.SecondFragment"</span>
+        <span class="na">android:label=</span><span class="s">"second frag"</span>
+        <span class="na">tools:layout=</span><span class="s">"@layout/fragment_simple_second"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/fragment&gt;</span>
+<span class="nt">&lt;/navigation&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>那第一个 Fragment 怎么和 第二个 Fragment 关联起来？很简单，有 action<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180617163135.png" alt="运行结果截图" /><br /><br />
+<img src="/images/Android Navigation/搜狗截图20180617163440.png" alt="运行结果截图" /><br /><br />
+这里可以看到 action 有很多属性，这里现在我们只需要 id 和 destination，id 就是这个 action 的 id, destination 是目的地，要跳转到哪里的，这里写上第二个 Fragment 的 id。</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;navigation</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">app:startDestination=</span><span class="s">"@id/nav_simple_first_frag"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_simple_first_frag"</span>
+        <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.simple.FirstFragment"</span>
+        <span class="na">android:label=</span><span class="s">"first frag"</span>
+        <span class="na">tools:layout=</span><span class="s">"@layout/fragment_simple_first"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;action</span>
+            <span class="na">android:id=</span><span class="s">"@+id/action_nav_first_frag_to_nav_second_frag"</span>
+            <span class="na">app:destination=</span><span class="s">"@id/nav_simple_second_frag"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/fragment&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_simple_second_frag"</span>
+        <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.simple.SecondFragment"</span>
+        <span class="na">android:label=</span><span class="s">"second frag"</span>
+        <span class="na">tools:layout=</span><span class="s">"@layout/fragment_simple_second"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/fragment&gt;</span>
+<span class="nt">&lt;/navigation&gt;</span>
+</code></pre>
+</div>
+
+<p>到这里可以去 Design 看看，第一个 Fragment 有个箭头指向第二个 Fragment<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180617164734.png" alt="运行结果截图" /><br /><br /></p>
+<blockquote>
+  <p>Navigation 这里已经完事，这回没坑，去第一个 Fragment 给 Button 添加上点击事件，要跳转到第二个 Fragment 得有 NavController，就是用来控制跳转的，那怎么得到，有三种方法，Navigation 类有两种，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Find a {@link NavController} given a local {@link View}.
+ *
+ * &lt;p&gt;This method will locate the {@link NavController} associated with this view.
+ * This is automatically populated for views that are managed by a {@link NavHost}
+ * and is intended for use by various {@link android.view.View.OnClickListener listener}
+ * interfaces.&lt;/p&gt;
+ *
+ * @param view the view to search from
+ * @return the locally scoped {@link NavController} to the given view
+ * @throws IllegalStateException if the given view does not correspond with a
+ * {@link NavHost} or is not within a NavHost.
+ */</span>
+<span class="nd">@NonNull</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="n">NavController</span> <span class="nf">findNavController</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">View</span> <span class="n">view</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">NavController</span> <span class="n">navController</span> <span class="o">=</span> <span class="n">findViewNavController</span><span class="o">(</span><span class="n">view</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">navController</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"View "</span> <span class="o">+</span> <span class="n">view</span> <span class="o">+</span> <span class="s">" does not have a NavController set"</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">navController</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Find a {@link NavController} given the id of a View and its containing
+ * {@link Activity}. This is a convenience wrapper around {@link #findNavController(View)}.
+ *
+ * &lt;p&gt;This method will locate the {@link NavController} associated with this view.
+ * This is automatically populated for the id of a {@link NavHost} and its children.&lt;/p&gt;
+ *
+ * @param activity The Activity hosting the view
+ * @param viewId The id of the view to search from
+ * @return the {@link NavController} associated with the view referenced by id
+ * @throws IllegalStateException if the given viewId does not correspond with a
+ * {@link NavHost} or is not within a NavHost.
+ */</span>
+<span class="nd">@NonNull</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="n">NavController</span> <span class="nf">findNavController</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">Activity</span> <span class="n">activity</span><span class="o">,</span> <span class="nd">@IdRes</span> <span class="kt">int</span> <span class="n">viewId</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">View</span> <span class="n">view</span> <span class="o">=</span> <span class="n">ActivityCompat</span><span class="o">.</span><span class="na">requireViewById</span><span class="o">(</span><span class="n">activity</span><span class="o">,</span> <span class="n">viewId</span><span class="o">);</span>
+    <span class="n">NavController</span> <span class="n">navController</span> <span class="o">=</span> <span class="n">findViewNavController</span><span class="o">(</span><span class="n">view</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">navController</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"Activity "</span> <span class="o">+</span> <span class="n">activity</span>
+                <span class="o">+</span> <span class="s">" does not have a NavController set on "</span> <span class="o">+</span> <span class="n">viewId</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">navController</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>还有一种是通过 NavHostFragment 类</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Find a {@link NavController} given a local {@link Fragment}.
+ *
+ * &lt;p&gt;This method will locate the {@link NavController} associated with this Fragment,
+ * looking first for a {@link NavHostFragment} along the given Fragment's parent chain.
+ * If a {@link NavController} is not found, this method will look for one along this
+ * Fragment's {@link Fragment#getView() view hierarchy} as specified by
+ * {@link Navigation#findNavController(View)}.&lt;/p&gt;
+ *
+ * @param fragment the locally scoped Fragment for navigation
+ * @return the locally scoped {@link NavController} for navigating from this {@link Fragment}
+ * @throws IllegalStateException if the given Fragment does not correspond with a
+ * {@link NavHost} or is not within a NavHost.
+ */</span>
+<span class="nd">@NonNull</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="n">NavController</span> <span class="nf">findNavController</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">Fragment</span> <span class="n">fragment</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Fragment</span> <span class="n">findFragment</span> <span class="o">=</span> <span class="n">fragment</span><span class="o">;</span>
+    <span class="k">while</span> <span class="o">(</span><span class="n">findFragment</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">findFragment</span> <span class="k">instanceof</span> <span class="n">NavHostFragment</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">((</span><span class="n">NavHostFragment</span><span class="o">)</span> <span class="n">findFragment</span><span class="o">).</span><span class="na">getNavController</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="n">Fragment</span> <span class="n">primaryNavFragment</span> <span class="o">=</span> <span class="n">findFragment</span><span class="o">.</span><span class="na">requireFragmentManager</span><span class="o">()</span>
+                <span class="o">.</span><span class="na">getPrimaryNavigationFragment</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">primaryNavFragment</span> <span class="k">instanceof</span> <span class="n">NavHostFragment</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="o">((</span><span class="n">NavHostFragment</span><span class="o">)</span> <span class="n">primaryNavFragment</span><span class="o">).</span><span class="na">getNavController</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="n">findFragment</span> <span class="o">=</span> <span class="n">findFragment</span><span class="o">.</span><span class="na">getParentFragment</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="c1">// Try looking for one associated with the view instead, if applicable</span>
+    <span class="n">View</span> <span class="n">view</span> <span class="o">=</span> <span class="n">fragment</span><span class="o">.</span><span class="na">getView</span><span class="o">();</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">view</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">Navigation</span><span class="o">.</span><span class="na">findNavController</span><span class="o">(</span><span class="n">view</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"Fragment "</span> <span class="o">+</span> <span class="n">fragment</span>
+            <span class="o">+</span> <span class="s">" does not have a NavController set"</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>都是 public static 的方法，所以得到 NavController 之后呢，NavController 有 navigate 方法可以做跳转的</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Navigate to a destination from the current navigation graph. This supports both navigating
+ * via an {@link NavDestination#getAction(int) action} and directly navigating to a destination.
+ *
+ * @param resId an {@link NavDestination#getAction(int) action} id or a destination id to
+ *              navigate to
+ */</span>
+<span class="kd">public</span> <span class="kd">final</span> <span class="kt">void</span> <span class="nf">navigate</span><span class="o">(</span><span class="nd">@IdRes</span> <span class="kt">int</span> <span class="n">resId</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">navigate</span><span class="o">(</span><span class="n">resId</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>这里的参数 resId ,从注释中也知道是 action 的那个 id, 所以，赶紧给按钮添加事件做跳转啊，</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FirstFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span> <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span>
+                             <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">fragment_simple_first</span><span class="o">,</span> <span class="n">container</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onViewCreated</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">View</span> <span class="n">view</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Button</span> <span class="n">btnFirstToSecond</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">btn_to_second_fragment</span><span class="o">);</span>
+        <span class="n">btnFirstToSecond</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="c1">//NavHostFragment.findNavController(FirstFragment.this).navigate(R.id.action_nav_first_frag_to_nav_second_frag);</span>
+                <span class="c1">//Navigation.findNavController(getActivity(), R.id.btn_to_second_fragment).navigate(R.id.action_nav_first_frag_to_nav_second_frag);</span>
+                <span class="n">Navigation</span><span class="o">.</span><span class="na">findNavController</span><span class="o">(</span><span class="n">getView</span><span class="o">()).</span><span class="na">navigate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">action_nav_first_frag_to_nav_second_frag</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p><img src="/images/Android Navigation/2017-1-22230940.gif" alt="运行结果截图" /><br /><br /></p>
+<blockquote>
+  <p>上面注释掉的两个也是可以跳转的</p>
+  <h4 id="三界面切换动画">（三）界面切换动画</h4>
+  <p>界面是不是感觉很生硬？一点就跳过去了，在 action 那可以看到有有几个 anim，对的，可以添加动画，添加个淡入淡出的动画吧，<br />
+fade_in</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;set</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;alpha</span>
+        <span class="na">android:duration=</span><span class="s">"500"</span>
+        <span class="na">android:fromAlpha=</span><span class="s">"0.0"</span>
+        <span class="na">android:toAlpha=</span><span class="s">"1.0"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/set&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>fade_out</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;set</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;alpha</span>
+        <span class="na">android:duration=</span><span class="s">"500"</span>
+        <span class="na">android:fromAlpha=</span><span class="s">"1.0"</span>
+        <span class="na">android:toAlpha=</span><span class="s">"0.0"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/set&gt;</span>
+</code></pre>
+</div>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;navigation</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">app:startDestination=</span><span class="s">"@id/nav_simple_first_frag"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_simple_first_frag"</span>
+        <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.simple.FirstFragment"</span>
+        <span class="na">android:label=</span><span class="s">"first frag"</span>
+        <span class="na">tools:layout=</span><span class="s">"@layout/fragment_simple_first"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;action</span>
+            <span class="na">android:id=</span><span class="s">"@+id/action_nav_first_frag_to_nav_second_frag"</span>
+            <span class="na">app:destination=</span><span class="s">"@id/nav_simple_second_frag"</span>
+            <span class="na">app:enterAnim=</span><span class="s">"@anim/fade_in"</span>
+            <span class="na">app:exitAnim=</span><span class="s">"@anim/fade_out"</span>
+            <span class="na">app:popEnterAnim=</span><span class="s">"@anim/fade_in"</span>
+            <span class="na">app:popExitAnim=</span><span class="s">"@anim/fade_out"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/fragment&gt;</span>
+    ......
+<span class="nt">&lt;/navigation&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>看看效果，是不是好些了<br /><br />
+<img src="/images/Android Navigation/2017-1-22230941.gif" alt="运行结果截图" /><br /><br /></p>
+  <h4 id="四数据传递">（四）数据传递</h4>
+  <p>有时候可能要从第一个 Fragment 带些数据去第二个 Fragment，那怎么办，也很简单，navigate 有个俩参数的方法</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Navigate to a destination from the current navigation graph. This supports both navigating
+ * via an {@link NavDestination#getAction(int) action} and directly navigating to a destination.
+ *
+ * @param resId an {@link NavDestination#getAction(int) action} id or a destination id to
+ *              navigate to
+ * @param args arguments to pass to the destination
+ */</span>
+<span class="kd">public</span> <span class="kd">final</span> <span class="kt">void</span> <span class="nf">navigate</span><span class="o">(</span><span class="nd">@IdRes</span> <span class="kt">int</span> <span class="n">resId</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Bundle</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">navigate</span><span class="o">(</span><span class="n">resId</span><span class="o">,</span> <span class="n">args</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>第二个参数 Bundle 是经常用的了，跳转后 Activity 可以用 getIntent() 获取，Fragment 可以通过 getArguments() 获取，试试吧</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FirstFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span> <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span>
+                             <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">fragment_simple_first</span><span class="o">,</span> <span class="n">container</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onViewCreated</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">View</span> <span class="n">view</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Button</span> <span class="n">btnFirstToSecond</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">btn_to_second_fragment</span><span class="o">);</span>
+        <span class="n">btnFirstToSecond</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">Bundle</span> <span class="n">bundle</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Bundle</span><span class="o">();</span>
+                <span class="n">bundle</span><span class="o">.</span><span class="na">putString</span><span class="o">(</span><span class="s">"KEY"</span><span class="o">,</span> <span class="s">"我是从 First 过来的"</span><span class="o">);</span>
+                <span class="n">Navigation</span><span class="o">.</span><span class="na">findNavController</span><span class="o">(</span><span class="n">getView</span><span class="o">()).</span><span class="na">navigate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">action_nav_first_frag_to_nav_second_frag</span><span class="o">,</span> <span class="n">bundle</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SecondFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+        <span class="n">Bundle</span> <span class="n">arguments</span> <span class="o">=</span> <span class="n">getArguments</span><span class="o">();</span>
+        <span class="n">String</span> <span class="n">data</span> <span class="o">=</span> <span class="n">arguments</span><span class="o">.</span><span class="na">getString</span><span class="o">(</span><span class="s">"KEY"</span><span class="o">);</span>
+        <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getContext</span><span class="o">(),</span> <span class="n">data</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span> <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span>
+                             <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">fragment_simple_second</span><span class="o">,</span> <span class="n">container</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>这里是 Fragment ，跳转后用 getArguments() 去获取，
+<img src="/images/Android Navigation/2017-1-22230939.gif" alt="运行结果截图" /><br /><br /></p>
+  <h4 id="五类型安全的方式传递数据">（五）类型安全的方式传递数据</h4>
+  <p>Navigation 还提供了一种安全的数据传递，是怎样的呢？先配置安全插件,<br />
+在 Project 下的 build.gradle</p>
+</blockquote>
+
+<div class="language-gradle highlighter-rouge"><pre class="highlight"><code><span class="k">buildscript</span> <span class="o">{</span>
+    <span class="o">......</span>
+    <span class="k">dependencies</span> <span class="o">{</span>
+        <span class="o">......</span>
+        <span class="n">classpath</span> <span class="s1">'android.arch.navigation:navigation-safe-args-gradle-plugin:1.0.0-alpha02'</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>在 app 下的 build.gradle 里 apply, 同步一下 gradle</p>
+</blockquote>
+
+<div class="language-gradle highlighter-rouge"><pre class="highlight"><code><span class="n">apply</span> <span class="nl">plugin:</span> <span class="s1">'com.android.application'</span>
+<span class="n">apply</span> <span class="nl">plugin:</span> <span class="s1">'androidx.navigation.safeargs'</span>
+<span class="n">android</span> <span class="o">{</span>
+    <span class="o">......</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>配置完就开始吧，在 fragment 元素里打上 &lt; 会出现 argument 就是我们想要的<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180618121705.png" alt="运行结果截图" /><br /><br />
+argument 有三个属性 name、defaultValue 和 type, name 就是名字到时会生成这个名字的 set 和 get 方法，defaultValue 是默认值，type 就是数据类型<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180618122140.png" alt="运行结果截图" /><br /><br />
+数据类型这一块我没找到相关文档有什么数据类型可以传输的，我试过八种基本数据类型和 String 类型，只有 boolean、integer、float 和 string 可以，各位有知道有相关文档或其他类型的还望告知<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180618123047.png" alt="运行结果截图" /><br /><br />
+<img src="/images/Android Navigation/搜狗截图20180618123058.png" alt="运行结果截图" /><br /><br />
+那就试试那四种可以的类型</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;fragment</span>
+    <span class="na">android:id=</span><span class="s">"@+id/nav_simple_second_frag"</span>
+    <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.simple.SecondFragment"</span>
+    <span class="na">android:label=</span><span class="s">"second frag"</span>
+    <span class="na">tools:layout=</span><span class="s">"@layout/fragment_simple_second"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;action</span>
+        <span class="na">android:id=</span><span class="s">"@+id/action_nav_second_frag_to_nav_third_frag"</span>
+        <span class="na">app:destination=</span><span class="s">"@id/nav_simple_third_frag"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;argument</span> <span class="na">android:name=</span><span class="s">"booleanData"</span> <span class="na">app:type=</span><span class="s">"boolean"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;argument</span> <span class="na">android:name=</span><span class="s">"intData"</span> <span class="na">app:type=</span><span class="s">"integer"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;argument</span> <span class="na">android:name=</span><span class="s">"floatData"</span> <span class="na">app:type=</span><span class="s">"float"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;argument</span> <span class="na">android:name=</span><span class="s">"stringData"</span> <span class="na">app:type=</span><span class="s">"string"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/fragment&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>完了就 rebuild 一下，让安全插件生成相关的类，末尾有 Directions 是 Destination 里有 action 的，末尾带有 Args 是 Destination 里有 argument 的<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180618124134.png" alt="运行结果截图" /><br /><br />
+怎么用呢？使用也简单，生成的 argument 的类使用 Builder 模式，这里的数据是从第一个 Fragment 传数据给第二个 Fragment<br />
+第一个 Fragment 的按钮点击事件处理，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">btnFirstToSecond</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">SecondFragmentArgs</span> <span class="n">fragmentArgs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SecondFragmentArgs</span>
+                <span class="o">.</span><span class="na">Builder</span><span class="o">(</span><span class="kc">true</span><span class="o">,</span>
+                <span class="mi">1</span><span class="o">,</span>
+                <span class="mf">1.1f</span><span class="o">,</span>
+                <span class="s">"我是通过 argument 过来的"</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+        <span class="n">Navigation</span><span class="o">.</span><span class="na">findNavController</span><span class="o">(</span><span class="n">getView</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">navigate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">action_nav_first_frag_to_nav_second_frag</span><span class="o">,</span> <span class="n">fragmentArgs</span><span class="o">.</span><span class="na">toBundle</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>用 Builder 得到 Argument 类的对象后，Argument 类有个 toBundle() 方法会生成 Bundle 对象并把数据填充进这个 Bundle 对象里<br />
+第二个 Fragment 接收，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SecondFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">TAG</span> <span class="o">=</span> <span class="s">"SecondFragment"</span><span class="o">;</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+        <span class="n">SecondFragmentArgs</span> <span class="n">fragmentArgs</span> <span class="o">=</span> <span class="n">SecondFragmentArgs</span><span class="o">.</span><span class="na">fromBundle</span><span class="o">(</span><span class="n">getArguments</span><span class="o">());</span>
+        <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="n">TAG</span><span class="o">,</span> <span class="s">"boolean data = "</span> <span class="o">+</span> <span class="n">fragmentArgs</span><span class="o">.</span><span class="na">getBooleanData</span><span class="o">());</span>
+        <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="n">TAG</span><span class="o">,</span> <span class="s">"int data = "</span> <span class="o">+</span> <span class="n">fragmentArgs</span><span class="o">.</span><span class="na">getIntData</span><span class="o">());</span>
+        <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="n">TAG</span><span class="o">,</span> <span class="s">"float data = "</span> <span class="o">+</span> <span class="n">fragmentArgs</span><span class="o">.</span><span class="na">getFloatData</span><span class="o">());</span>
+        <span class="n">Log</span><span class="o">.</span><span class="na">v</span><span class="o">(</span><span class="n">TAG</span><span class="o">,</span> <span class="s">"string data = "</span> <span class="o">+</span> <span class="n">fragmentArgs</span><span class="o">.</span><span class="na">getStringData</span><span class="o">());</span>
+    <span class="o">}</span>
+    <span class="o">......</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>在 onCreate 里，因为 argument 类有个 fromBundle(Bundle bundle)，把 getArguments() 传进去 fromBundle() 方法返回 argument 类的对象，然后使用 get 去获取数据，<br /><br />
+<img src="/images/Android Navigation/2017-1-22230928.gif" alt="运行结果截图" /><br /><br /></p>
+  <h4 id="六返回">（六）返回</h4>
+  <p>还记得前面说过 defaultNavHost 这个属性么？和返回键有关的，如果把这个属性改为 false，从第一个 Fragment 跳到第二个 Fragment 再按返回键就会直接退出程序<br /><br />
+<img src="/images/Android Navigation/2017-1-22230931.gif" alt="运行结果截图" /><br /><br />
+第二个 Fragment 可以不用按返回键返回第一个 Fragment, 通过 NavController 去控制，修改下第二个 Fragment 的布局，</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;android.support.constraint.ConstraintLayout</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+    <span class="na">tools:context=</span><span class="s">".simple.SecondFragment"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;android.support.v7.widget.AppCompatButton</span>
+        <span class="na">android:id=</span><span class="s">"@+id/btn_back_first_fragment"</span>
+        <span class="na">android:layout_width=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:text=</span><span class="s">"返回第一个Fragment"</span>
+        <span class="na">android:textAllCaps=</span><span class="s">"false"</span>
+        <span class="na">app:layout_constraintBottom_toBottomOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintLeft_toLeftOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintRight_toRightOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintTop_toTopOf=</span><span class="s">"parent"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/android.support.constraint.ConstraintLayout&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>NavController 有 navigateUp() 和 popBackStack()都可以返回上一级，有什么区别？popBackStack() 如果当前的返回栈是空的就会报错，因为栈是空的了，navigateUp() 则不会，还是停留在当前界面，好了，该给第二个 Fragment 添加事件返回了，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SecondFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+    <span class="o">......</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onViewCreated</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">View</span> <span class="n">view</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Button</span> <span class="n">btnBackFristFrag</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">btn_back_first_fragment</span><span class="o">);</span>
+        <span class="n">btnBackFristFrag</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">Navigation</span><span class="o">.</span><span class="na">findNavController</span><span class="o">(</span><span class="n">getView</span><span class="o">()).</span><span class="na">navigateUp</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p><img src="/images/Android Navigation/2017-1-22230938.gif" alt="运行结果截图" /><br /><br /></p>
+<blockquote>
+  <p>试试给第一个 Fragment 的按钮来个 popBackStack() 会怎样？</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FirstFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+    <span class="o">......</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onViewCreated</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">View</span> <span class="n">view</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Button</span> <span class="n">btnFirstToSecond</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">btn_to_second_fragment</span><span class="o">);</span>
+        <span class="n">btnFirstToSecond</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">Navigation</span><span class="o">.</span><span class="na">findNavController</span><span class="o">(</span><span class="n">getView</span><span class="o">()).</span><span class="na">popBackStack</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p><img src="/images/Android Navigation/2017-1-22230937.gif" alt="运行结果截图" /><br /><br /></p>
+<blockquote>
+  <p>崩溃了，按第一下时没事，第二次按下就崩溃了，来看看 log, NavController back stack is empty
+<img src="/images/Android Navigation/搜狗截图20180617191409.png" alt="运行结果截图" /><br /><br />
+看看 popBackStack() 源码，第一句就是判断返回栈是不是空的</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Attempts to pop the controller's back stack. Analogous to when the user presses
+ * the system {@link android.view.KeyEvent#KEYCODE_BACK Back} button when the associated
+ * navigation host has focus.
+ *
+ * @return true if the stack was popped, false otherwise
+ */</span>
+<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">popBackStack</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">mBackStack</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"NavController back stack is empty"</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kt">boolean</span> <span class="n">popped</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="k">while</span> <span class="o">(!</span><span class="n">mBackStack</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">popped</span> <span class="o">=</span> <span class="n">mBackStack</span><span class="o">.</span><span class="na">removeLast</span><span class="o">().</span><span class="na">getNavigator</span><span class="o">().</span><span class="na">popBackStack</span><span class="o">();</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">popped</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">break</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="k">return</span> <span class="n">popped</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>那换 navigateUp() 试试，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FirstFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+    <span class="o">......</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onViewCreated</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">View</span> <span class="n">view</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Button</span> <span class="n">btnFirstToSecond</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="na">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">btn_to_second_fragment</span><span class="o">);</span>
+        <span class="n">btnFirstToSecond</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">Navigation</span><span class="o">.</span><span class="na">findNavController</span><span class="o">(</span><span class="n">getView</span><span class="o">()).</span><span class="na">navigateUp</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">});</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p><img src="/images/Android Navigation/2017-1-22230936.gif" alt="运行结果截图" /><br /><br /></p>
+<blockquote>
+  <p>navigateUp() 点了很多下也没什么事，看看 navigateUp() 的源码</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Attempts to navigate up in the navigation hierarchy. Suitable for when the
+ * user presses the "Up" button marked with a left (or start)-facing arrow in the upper left
+ * (or starting) corner of the app UI.
+ *
+ * &lt;p&gt;The intended behavior of Up differs from {@link #popBackStack() Back} when the user
+ * did not reach the current destination from the application's own task. e.g. if the user
+ * is viewing a document or link in the current app in an activity hosted on another app's
+ * task where the user clicked the link. In this case the current activity (determined by the
+ * context used to create this NavController) will be {@link Activity#finish() finished} and
+ * the user will be taken to an appropriate destination in this app on its own task.&lt;/p&gt;
+ *
+ * @return true if navigation was successful, false otherwise
+ */</span>
+<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">navigateUp</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">mBackStack</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">==</span> <span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// If there's only one entry, then we've deep linked into a specific destination</span>
+        <span class="c1">// on another task so we need to find the parent and start our task from there</span>
+        <span class="n">NavDestination</span> <span class="n">currentDestination</span> <span class="o">=</span> <span class="n">getCurrentDestination</span><span class="o">();</span>
+        <span class="kt">int</span> <span class="n">destId</span> <span class="o">=</span> <span class="n">currentDestination</span><span class="o">.</span><span class="na">getId</span><span class="o">();</span>
+        <span class="n">NavGraph</span> <span class="n">parent</span> <span class="o">=</span> <span class="n">currentDestination</span><span class="o">.</span><span class="na">getParent</span><span class="o">();</span>
+        <span class="k">while</span> <span class="o">(</span><span class="n">parent</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">parent</span><span class="o">.</span><span class="na">getStartDestination</span><span class="o">()</span> <span class="o">!=</span> <span class="n">destId</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">TaskStackBuilder</span> <span class="n">parentIntents</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NavDeepLinkBuilder</span><span class="o">(</span><span class="n">NavController</span><span class="o">.</span><span class="na">this</span><span class="o">)</span>
+                        <span class="o">.</span><span class="na">setDestination</span><span class="o">(</span><span class="n">parent</span><span class="o">.</span><span class="na">getId</span><span class="o">())</span>
+                        <span class="o">.</span><span class="na">createTaskStackBuilder</span><span class="o">();</span>
+                <span class="n">parentIntents</span><span class="o">.</span><span class="na">startActivities</span><span class="o">();</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">mActivity</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="n">mActivity</span><span class="o">.</span><span class="na">finish</span><span class="o">();</span>
+                <span class="o">}</span>
+                <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="o">}</span>
+            <span class="n">destId</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="na">getId</span><span class="o">();</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="na">getParent</span><span class="o">();</span>
+        <span class="o">}</span>
+        <span class="c1">// We're already at the startDestination of the graph so there's no 'Up' to go to</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">popBackStack</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>navigateUp() 做了判断 返回栈是不是只剩一个，不是的话就会去调用 popBackStack(), 注意这句注释 We’re already at the startDestination of the graph so there’s no ‘Up’ to go to，说已经在开始位置就没有可向上返回的了，那用 navigateUp() 不就好么，还不会报错，popBackStack 是支持跨级返回，navigateUp() 不行，比如如果栈中有 4 个，可以用 popBackStack 直接返回到第一个，那就再建两个 Fragment 试试,</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ThirdFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span> <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span>
+                             <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">fragment_simple_third</span><span class="o">,</span> <span class="n">container</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>ThirdFragment 的布局</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;android.support.constraint.ConstraintLayout</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+    <span class="na">tools:context=</span><span class="s">".simple.ThirdFragment"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;android.support.v7.widget.AppCompatButton</span>
+        <span class="na">android:id=</span><span class="s">"@+id/btn_to_fourth_fragment"</span>
+        <span class="na">android:layout_width=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:text=</span><span class="s">"去第四个Fragment"</span>
+        <span class="na">android:textAllCaps=</span><span class="s">"false"</span>
+        <span class="na">app:layout_constraintBottom_toBottomOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintLeft_toLeftOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintRight_toRightOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintTop_toTopOf=</span><span class="s">"parent"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/android.support.constraint.ConstraintLayout&gt;</span>
+</code></pre>
+</div>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FourthFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span> <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span>
+                             <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">fragment_simple_fourth</span><span class="o">,</span> <span class="n">container</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>FourthFragment 的布局<br /></p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;android.support.constraint.ConstraintLayout</span>
+    <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+    <span class="na">tools:context=</span><span class="s">".simple.FourthFragment"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;android.support.v7.widget.AppCompatButton</span>
+        <span class="na">android:id=</span><span class="s">"@+id/btn_back_first_fragment"</span>
+        <span class="na">android:layout_width=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:text=</span><span class="s">"返回第一个Fragment"</span>
+        <span class="na">android:textAllCaps=</span><span class="s">"false"</span>
+        <span class="na">app:layout_constraintBottom_toBottomOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintLeft_toLeftOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintRight_toRightOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintTop_toTopOf=</span><span class="s">"parent"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/android.support.constraint.ConstraintLayout&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>把第二个 Fragment 的布局也改下<br /></p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;android.support.constraint.ConstraintLayout</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+    <span class="na">tools:context=</span><span class="s">".simple.SecondFragment"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;android.support.v7.widget.AppCompatButton</span>
+        <span class="na">android:id=</span><span class="s">"@+id/btn_to_third_fragment"</span>
+        <span class="na">android:layout_width=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:text=</span><span class="s">"去第三个Fragment"</span>
+        <span class="na">android:textAllCaps=</span><span class="s">"false"</span>
+        <span class="na">app:layout_constraintBottom_toBottomOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintLeft_toLeftOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintRight_toRightOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintTop_toTopOf=</span><span class="s">"parent"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/android.support.constraint.ConstraintLayout&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>把这两个 Fragment 也添加到 navigate 文件去，</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;navigation</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">app:startDestination=</span><span class="s">"@id/nav_simple_first_frag"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_simple_first_frag"</span>
+        <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.simple.FirstFragment"</span>
+        <span class="na">android:label=</span><span class="s">"first frag"</span>
+        <span class="na">tools:layout=</span><span class="s">"@layout/fragment_simple_first"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;action</span>
+            <span class="na">android:id=</span><span class="s">"@+id/action_nav_first_frag_to_nav_second_frag"</span>
+            <span class="na">app:destination=</span><span class="s">"@id/nav_simple_second_frag"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/fragment&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_simple_second_frag"</span>
+        <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.simple.SecondFragment"</span>
+        <span class="na">android:label=</span><span class="s">"second frag"</span>
+        <span class="na">tools:layout=</span><span class="s">"@layout/fragment_simple_second"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;action</span>
+            <span class="na">android:id=</span><span class="s">"@+id/action_nav_second_frag_to_nav_third_frag"</span>
+            <span class="na">app:destination=</span><span class="s">"@id/nav_simple_third_frag"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/fragment&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_simple_third_frag"</span>
+        <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.simple.ThirdFragment"</span>
+        <span class="na">android:label=</span><span class="s">"third frag"</span>
+        <span class="na">tools:layout=</span><span class="s">"@layout/fragment_simple_third"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;action</span>
+            <span class="na">android:id=</span><span class="s">"@+id/action_nav_third_frag_to_nav_fourth_frag"</span>
+            <span class="na">app:destination=</span><span class="s">"@id/nav_simple_fourth_frag"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;/fragment&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_simple_fourth_frag"</span>
+        <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.simple.FourthFragment"</span>
+        <span class="na">android:label=</span><span class="s">"fourth frag"</span>
+        <span class="na">tools:layout=</span><span class="s">"@layout/fragment_simple_fourth"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/fragment&gt;</span>
+<span class="nt">&lt;/navigation&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>看下 Navigation 的 Design 界面<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180617221908.png" alt="运行结果截图" /><br /><br />
+处理下各个 Fragment 的点击事件<br />
+FirstFragment</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">btnFirstToSecond</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Navigation</span><span class="o">.</span><span class="na">findNavController</span><span class="o">(</span><span class="n">getView</span><span class="o">()).</span><span class="na">navigate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">action_nav_first_frag_to_nav_second_frag</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>SecondFragment</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">btnToThirdFrag</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Navigation</span><span class="o">.</span><span class="na">findNavController</span><span class="o">(</span><span class="n">getView</span><span class="o">()).</span><span class="na">navigate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">action_nav_second_frag_to_nav_third_frag</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>ThirdFragment</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">btnToFourthFrag</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Navigation</span><span class="o">.</span><span class="na">findNavController</span><span class="o">(</span><span class="n">getView</span><span class="o">()).</span><span class="na">navigate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">action_nav_third_frag_to_nav_fourth_frag</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>FourthFragment</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">btnBackFristFrag</span><span class="o">.</span><span class="na">setOnClickListener</span><span class="o">(</span><span class="k">new</span> <span class="n">View</span><span class="o">.</span><span class="na">OnClickListener</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onClick</span><span class="o">(</span><span class="n">View</span> <span class="n">v</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Navigation</span><span class="o">.</span><span class="na">findNavController</span><span class="o">(</span><span class="n">getView</span><span class="o">()).</span><span class="na">popBackStack</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">nav_simple_first_frag</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>终于处理完了，好了，运行下看看效果，从第四个 Fragment 一下就返回第一个 Fragment 了，再按返回键就退出程序了<br /><br />
+<img src="/images/Android Navigation/2017-1-22230935.gif" alt="运行结果截图" /><br /><br />
+这里调用的是 popBackStack(@IdRes int destinationId, boolean inclusive) 方法，第一个参数是 Navigation 文件的 fragment 的 id，不是 action 的，第二个参数是指是否包含第一个参数 id 那个也弹出栈</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Attempts to pop the controller's back stack back to a specific destination.
+ *
+ * @param destinationId The topmost destination to retain
+ * @param inclusive Whether the given destination should also be popped.
+ *
+ * @return true if the stack was popped at least once, false otherwise
+ */</span>
+<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">popBackStack</span><span class="o">(</span><span class="nd">@IdRes</span> <span class="kt">int</span> <span class="n">destinationId</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">inclusive</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">mBackStack</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"NavController back stack is empty"</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="o">......</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h4 id="七与-toolbar-结合">（七）与 Toolbar 结合</h4>
+<blockquote>
+  <p>对的，Navigation 还可以和 Toolbar 相结合，Toolbar 左边会出现个返回的箭头，这样箭头的显示和隐藏控制都不用我们去写了，修改 Activity 的布局，添加个 toolbar</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;android.support.constraint.ConstraintLayout</span>
+    <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+    <span class="na">tools:context=</span><span class="s">".simple.SimpleActivity"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;android.support.v7.widget.Toolbar</span>
+        <span class="na">android:id=</span><span class="s">"@+id/toolbar"</span>
+        <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+        <span class="na">android:layout_height=</span><span class="s">"?attr/actionBarSize"</span>
+        <span class="na">android:background=</span><span class="s">"?attr/colorPrimary"</span>
+        <span class="na">android:theme=</span><span class="s">"@style/ThemeOverlay.AppCompat.Dark"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/frag_nav_simple"</span>
+        <span class="na">android:name=</span><span class="s">"androidx.navigation.fragment.NavHostFragment"</span>
+        <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+        <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+        <span class="na">app:navGraph=</span><span class="s">"@navigation/nav_simple"</span>
+        <span class="na">app:defaultNavHost=</span><span class="s">"true"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/android.support.constraint.ConstraintLayout&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>Activity 也要修改，当然用 Toolbar 的话 Activity 的 style 要设置 NoActionBar 的，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SimpleActivity</span> <span class="kd">extends</span> <span class="n">AppCompatActivity</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+        <span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_simple</span><span class="o">);</span>
+        <span class="n">Toolbar</span> <span class="n">toolbar</span> <span class="o">=</span> <span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">toolbar</span><span class="o">);</span>
+        <span class="n">setSupportActionBar</span><span class="o">(</span><span class="n">toolbar</span><span class="o">);</span>
+        <span class="n">FragmentManager</span> <span class="n">fragmentManager</span> <span class="o">=</span> <span class="n">getSupportFragmentManager</span><span class="o">();</span>
+        <span class="n">NavHostFragment</span> <span class="n">navHostFragment</span> <span class="o">=</span> <span class="o">(</span><span class="n">NavHostFragment</span><span class="o">)</span><span class="n">fragmentManager</span><span class="o">.</span><span class="na">findFragmentById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">frag_nav_simple</span><span class="o">);</span>
+        <span class="n">NavController</span> <span class="n">navController</span> <span class="o">=</span> <span class="n">navHostFragment</span><span class="o">.</span><span class="na">getNavController</span><span class="o">();</span>
+        <span class="n">NavigationUI</span><span class="o">.</span><span class="na">setupActionBarWithNavController</span><span class="o">(</span><span class="n">SimpleActivity</span><span class="o">.</span><span class="na">this</span><span class="o">,</span> <span class="n">navController</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">onSupportNavigateUp</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">Navigation</span><span class="o">.</span><span class="na">findNavController</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">frag_nav_simple</span><span class="o">).</span><span class="na">navigateUp</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>这里用到了 NavigationUI 的 setupActionBarWithNavController(AppCompatActivity activity, NavController navController) 方法，还覆盖了 onSupportNavigateUp() 方法，先看看效果吧<br /><br />
+<img src="/images/Android Navigation/2017-1-22230933.gif" alt="运行结果截图" /><br /><br />
+可以看到第一个 Fragment 的 Toolbar 是没有箭头的，跳转后 Toolbar 左侧会有个箭头，点击箭头会返回上一层，还有上面的 title 不就是我们在 Navigation 文件写的 Label 么 , setupActionBarWithNavController(AppCompatActivity activity, NavController navController) 里做了些什么？进去看看，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">setupActionBarWithNavController</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">AppCompatActivity</span> <span class="n">activity</span><span class="o">,</span>
+        <span class="nd">@NonNull</span> <span class="n">NavController</span> <span class="n">navController</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">setupActionBarWithNavController</span><span class="o">(</span><span class="n">activity</span><span class="o">,</span> <span class="n">navController</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>里面再调用三个参数的 setupActionBarWithNavController() 方法，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">setupActionBarWithNavController</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">AppCompatActivity</span> <span class="n">activity</span><span class="o">,</span>
+        <span class="nd">@NonNull</span> <span class="n">NavController</span> <span class="n">navController</span><span class="o">,</span>
+        <span class="nd">@Nullable</span> <span class="n">DrawerLayout</span> <span class="n">drawerLayout</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">navController</span><span class="o">.</span><span class="na">addOnNavigatedListener</span><span class="o">(</span>
+            <span class="k">new</span> <span class="nf">ActionBarOnNavigatedListener</span><span class="o">(</span><span class="n">activity</span><span class="o">,</span> <span class="n">drawerLayout</span><span class="o">));</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>第三个参数是 DrawerLayout ，难道 DrawerLayout 也可以和 Navigation 关联？是的，没错，这里再调用了 NavController 的 addOnNavigatedListener 方法</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Adds an {@link OnNavigatedListener} to this controller to receive events when
+ * the controller navigates to a new destination.
+ *
+ * &lt;p&gt;The current destination, if any, will be immediately sent to your listener.&lt;/p&gt;
+ *
+ * @param listener the listener to receive events
+ */</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">addOnNavigatedListener</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">OnNavigatedListener</span> <span class="n">listener</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// Inform the new listener of our current state, if any</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="n">mBackStack</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">listener</span><span class="o">.</span><span class="na">onNavigated</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">mBackStack</span><span class="o">.</span><span class="na">peekLast</span><span class="o">());</span>
+    <span class="o">}</span>
+    <span class="n">mOnNavigatedListeners</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">listener</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>这里看注释就知道，当收到 navigate 到新的 destination 这个事件就会告诉 OnNavigatedListener，其实是调用 ActionBarOnNavigatedListener 的 onNavigated，看看 onNavigated 做了什么，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">onNavigated</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">NavController</span> <span class="n">controller</span><span class="o">,</span>
+        <span class="nd">@NonNull</span> <span class="n">NavDestination</span> <span class="n">destination</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">ActionBar</span> <span class="n">actionBar</span> <span class="o">=</span> <span class="n">mActivity</span><span class="o">.</span><span class="na">getSupportActionBar</span><span class="o">();</span>
+    <span class="n">CharSequence</span> <span class="n">title</span> <span class="o">=</span> <span class="n">destination</span><span class="o">.</span><span class="na">getLabel</span><span class="o">();</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="n">TextUtils</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">(</span><span class="n">title</span><span class="o">))</span> <span class="o">{</span>
+        <span class="n">actionBar</span><span class="o">.</span><span class="na">setTitle</span><span class="o">(</span><span class="n">title</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kt">boolean</span> <span class="n">isStartDestination</span> <span class="o">=</span> <span class="n">findStartDestination</span><span class="o">(</span><span class="n">controller</span><span class="o">.</span><span class="na">getGraph</span><span class="o">())</span> <span class="o">==</span> <span class="n">destination</span><span class="o">;</span>
+    <span class="n">actionBar</span><span class="o">.</span><span class="na">setDisplayHomeAsUpEnabled</span><span class="o">(</span><span class="n">mDrawerLayout</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">||</span> <span class="o">!</span><span class="n">isStartDestination</span><span class="o">);</span>
+    <span class="n">setActionBarUpIndicator</span><span class="o">(</span><span class="n">mDrawerLayout</span> <span class="o">!=</span> <span class="kc">null</span> <span class="o">&amp;&amp;</span> <span class="n">isStartDestination</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>这里会先取出 destination 的 label， 然后给 ActionBar 设置 title，所以我们看到 ActionBar 那的 title,就是我们在 Navigation 文件里写的 label 属性，接着会判断是否是 Start Destination，不是的话会调用 ActionBar 的 setDisplayHomeAsUpEnabled() 方法设为true,所以我们看到的第一个 Fragment 就没有返回的箭头，其他的都有返回箭头。</p>
+  <h4 id="八动态加载-navigation">（八）动态加载 Navigation</h4>
+  <p>有时候不想马上启动 Start Destination，或者从别的地方收到传过来的数据，然后要在 Start Destination 中用的需求，这时就不能在 layout 中写 navGraph，因为写了 navGraph 一启动就会去加载 Start Destination，这时可以用代码去动态加载 Navigation 文件的内容，从 NavHostFragment 入手，<br />
+给第一个 Fragment 添加个 argument</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;fragment</span>
+    <span class="na">android:id=</span><span class="s">"@+id/nav_simple_first_frag"</span>
+    <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.simple.FirstFragment"</span>
+    <span class="na">android:label=</span><span class="s">"first frag"</span>
+    <span class="na">tools:layout=</span><span class="s">"@layout/fragment_simple_first"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;action</span>
+        <span class="na">android:id=</span><span class="s">"@+id/action_nav_first_frag_to_nav_second_frag"</span>
+        <span class="na">app:destination=</span><span class="s">"@id/nav_simple_second_frag"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;argument</span> <span class="na">android:name=</span><span class="s">"data"</span> <span class="na">app:type=</span><span class="s">"string"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/fragment&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>修改下 Activity 的 layout，把 NavHostFragment 的 navGraph 属性去掉</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;android.support.constraint.ConstraintLayout</span>
+    <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+    <span class="na">tools:context=</span><span class="s">".simple.SimpleActivity"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;fragment</span>
+    <span class="na">android:id=</span><span class="s">"@+id/frag_nav_simple"</span>
+    <span class="na">android:name=</span><span class="s">"androidx.navigation.fragment.NavHostFragment"</span>
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+    <span class="na">app:defaultNavHost=</span><span class="s">"false"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/android.support.constraint.ConstraintLayout&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>在 Activity 里加载</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SimpleActivity</span> <span class="kd">extends</span> <span class="n">AppCompatActivity</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+        <span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_simple</span><span class="o">);</span>
+        <span class="n">NavHostFragment</span> <span class="n">navHostFragment</span> <span class="o">=</span> <span class="o">(</span><span class="n">NavHostFragment</span><span class="o">)</span> <span class="n">getSupportFragmentManager</span><span class="o">().</span><span class="na">findFragmentById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">frag_nav_simple</span><span class="o">);</span>
+        <span class="n">NavGraph</span> <span class="n">navSimple</span> <span class="o">=</span> <span class="n">navHostFragment</span><span class="o">.</span><span class="na">getNavController</span><span class="o">().</span><span class="na">getNavInflater</span><span class="o">().</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">navigation</span><span class="o">.</span><span class="na">nav_simple</span><span class="o">);</span>
+        <span class="n">NavDestination</span> <span class="n">firstFragDestination</span> <span class="o">=</span> <span class="n">navSimple</span><span class="o">.</span><span class="na">findNode</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">nav_simple_first_frag</span><span class="o">);</span>
+        <span class="n">FirstFragmentArgs</span> <span class="n">fragmentArgs</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FirstFragmentArgs</span><span class="o">.</span><span class="na">Builder</span><span class="o">(</span><span class="s">"给 First 的数据"</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+        <span class="n">firstFragDestination</span><span class="o">.</span><span class="na">setDefaultArguments</span><span class="o">(</span><span class="n">fragmentArgs</span><span class="o">.</span><span class="na">toBundle</span><span class="o">());</span>
+        <span class="n">navHostFragment</span><span class="o">.</span><span class="na">getNavController</span><span class="o">().</span><span class="na">setGraph</span><span class="o">(</span><span class="n">navSimple</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="o">......</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>这里先通过 FragmentManager 找到 NavHostFragment，navHostFragment 有 getNavController() 方法，NavController 里 getNavInflater() 方法获得 NavInflater，NavInflater 这个类似 LayoutInflater,  通过 inflate() 去加载 Navigation，设置了数据后通过 NavController 的 setGraph(NavGraph graph) 就加载出来了<br />
+FirstFragment 这边接收数据，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FirstFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="nd">@Nullable</span> <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+        <span class="n">FirstFragmentArgs</span> <span class="n">fragmentArgs</span> <span class="o">=</span> <span class="n">FirstFragmentArgs</span><span class="o">.</span><span class="na">fromBundle</span><span class="o">(</span><span class="n">getArguments</span><span class="o">());</span>
+        <span class="n">String</span> <span class="n">data</span> <span class="o">=</span> <span class="n">fragmentArgs</span><span class="o">.</span><span class="na">getData</span><span class="o">();</span>
+        <span class="n">Toast</span><span class="o">.</span><span class="na">makeText</span><span class="o">(</span><span class="n">getContext</span><span class="o">(),</span> <span class="n">data</span><span class="o">,</span> <span class="n">Toast</span><span class="o">.</span><span class="na">LENGTH_SHORT</span><span class="o">).</span><span class="na">show</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="o">......</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p><img src="/images/Android Navigation/2017-1-22230930.gif" alt="运行结果截图" /><br /><br /></p>
+<h4 id="九与-bottomnavigationview-相结合">（九）与 BottomNavigationView 相结合</h4>
+<blockquote>
+  <p>Navigation 还可以和 BottomNavigationView 相结合，这里再建了一个 BottomNavigationView 的 Activity<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180618180829.png" alt="运行结果截图" /><br /><br />
+默认底部有三个 Button，那就再建三个相关的 Fragment，<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180618174006.png" alt="运行结果截图" /><br /><br />
+HomeFragment</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">HomeFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span> <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span>
+                             <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">fragment_home</span><span class="o">,</span> <span class="n">container</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>HomeFragment 的布局</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;android.support.constraint.ConstraintLayout</span>
+    <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+    <span class="na">tools:context=</span><span class="s">".navigation.HomeFragment"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextView</span>
+        <span class="na">android:layout_width=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:text=</span><span class="s">"我是 Home Fragment"</span>
+        <span class="na">android:textSize=</span><span class="s">"30sp"</span>
+        <span class="na">app:layout_constraintBottom_toBottomOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintLeft_toLeftOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintRight_toRightOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintTop_toTopOf=</span><span class="s">"parent"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/android.support.constraint.ConstraintLayout&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>DashboardFragment</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DashboardFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span> <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span>
+                             <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">fragment_dashboard</span><span class="o">,</span> <span class="n">container</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>DashboardFragment 的布局</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;android.support.constraint.ConstraintLayout</span>
+    <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+    <span class="na">tools:context=</span><span class="s">".navigation.HomeFragment"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextView</span>
+        <span class="na">android:layout_width=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:text=</span><span class="s">"我是 Dashboard Fragment"</span>
+        <span class="na">android:textSize=</span><span class="s">"30sp"</span>
+        <span class="na">app:layout_constraintBottom_toBottomOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintLeft_toLeftOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintRight_toRightOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintTop_toTopOf=</span><span class="s">"parent"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/android.support.constraint.ConstraintLayout&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>NotificationsFragment</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NotificationsFragment</span> <span class="kd">extends</span> <span class="n">Fragment</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">View</span> <span class="nf">onCreateView</span><span class="o">(</span><span class="n">LayoutInflater</span> <span class="n">inflater</span><span class="o">,</span> <span class="n">ViewGroup</span> <span class="n">container</span><span class="o">,</span>
+                             <span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">inflater</span><span class="o">.</span><span class="na">inflate</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">fragment_notifications</span><span class="o">,</span> <span class="n">container</span><span class="o">,</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>NotificationsFragment 的布局</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;android.support.constraint.ConstraintLayout</span>
+    <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+    <span class="na">tools:context=</span><span class="s">".navigation.HomeFragment"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;TextView</span>
+        <span class="na">android:layout_width=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:text=</span><span class="s">"我是 Notifications Fragment"</span>
+        <span class="na">android:textSize=</span><span class="s">"30sp"</span>
+        <span class="na">app:layout_constraintBottom_toBottomOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintLeft_toLeftOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintRight_toRightOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintTop_toTopOf=</span><span class="s">"parent"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/android.support.constraint.ConstraintLayout&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>三个 Fragment 已经建完，再新建个 Navigation，在 navigation 目录下选择 New 这时会有 Navigation resource file 可选<br /><br />
+<img src="/images/Android Navigation/搜狗截图20180618175357.png" alt="运行结果截图" /><br /><br />
+Navigation 的内容</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;navigation</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">app:startDestination=</span><span class="s">"@id/nav_home"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_home"</span>
+        <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.navigation.HomeFragment"</span>
+        <span class="na">android:label=</span><span class="s">"@string/title_home"</span>
+        <span class="na">tools:layout=</span><span class="s">"@layout/fragment_home"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/fragment&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_dashboard"</span>
+        <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.navigation.DashboardFragment"</span>
+        <span class="na">android:label=</span><span class="s">"@string/title_dashboard"</span>
+        <span class="na">tools:layout=</span><span class="s">"@layout/fragment_dashboard"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/fragment&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_notifications"</span>
+        <span class="na">android:name=</span><span class="s">"com.ce.navigationtest.navigation.NotificationsFragment"</span>
+        <span class="na">android:label=</span><span class="s">"@string/title_notifications"</span>
+        <span class="na">tools:layout=</span><span class="s">"@layout/fragment_notifications"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;/fragment&gt;</span>
+<span class="nt">&lt;/navigation&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>最后来处理 Activity 的 layout 吧</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;android.support.constraint.ConstraintLayout</span>
+    <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span>
+    <span class="na">xmlns:app=</span><span class="s">"http://schemas.android.com/apk/res-auto"</span>
+    <span class="na">xmlns:tools=</span><span class="s">"http://schemas.android.com/tools"</span>
+    <span class="na">android:id=</span><span class="s">"@+id/container"</span>
+    <span class="na">android:layout_width=</span><span class="s">"match_parent"</span>
+    <span class="na">android:layout_height=</span><span class="s">"match_parent"</span>
+    <span class="na">tools:context=</span><span class="s">".navigation.BottomNavigationActivity"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;fragment</span>
+        <span class="na">android:id=</span><span class="s">"@+id/frag_nav_bottom_navigation"</span>
+        <span class="na">android:layout_width=</span><span class="s">"0dp"</span>
+        <span class="na">android:layout_height=</span><span class="s">"0dp"</span>
+        <span class="na">android:name=</span><span class="s">"androidx.navigation.fragment.NavHostFragment"</span>
+        <span class="na">app:defaultNavHost=</span><span class="s">"true"</span>
+        <span class="na">app:layout_constraintTop_toTopOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintStart_toStartOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintEnd_toEndOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintBottom_toTopOf=</span><span class="s">"@id/navigation"</span>
+        <span class="na">app:navGraph=</span><span class="s">"@navigation/nav_bottom_navigation"</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;android.support.design.widget.BottomNavigationView</span>
+        <span class="na">android:id=</span><span class="s">"@+id/navigation"</span>
+        <span class="na">android:layout_width=</span><span class="s">"0dp"</span>
+        <span class="na">android:layout_height=</span><span class="s">"wrap_content"</span>
+        <span class="na">android:layout_marginStart=</span><span class="s">"0dp"</span>
+        <span class="na">android:layout_marginEnd=</span><span class="s">"0dp"</span>
+        <span class="na">android:background=</span><span class="s">"?android:attr/windowBackground"</span>
+        <span class="na">app:layout_constraintBottom_toBottomOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintLeft_toLeftOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintRight_toRightOf=</span><span class="s">"parent"</span>
+        <span class="na">app:layout_constraintTop_toBottomOf=</span><span class="s">"@id/frag_nav_bottom_navigation"</span>
+        <span class="na">app:menu=</span><span class="s">"@menu/navigation"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/android.support.constraint.ConstraintLayout&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>这些都已经没什么好说的了，剩 Activity 里的逻辑要处理了，BottomNavigationView 的处理和上面 Toolbar 的处理差不多的，也是通过 NavigationUI 这个类</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">BottomNavigationActivity</span> <span class="kd">extends</span> <span class="n">AppCompatActivity</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="kt">void</span> <span class="nf">onCreate</span><span class="o">(</span><span class="n">Bundle</span> <span class="n">savedInstanceState</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">onCreate</span><span class="o">(</span><span class="n">savedInstanceState</span><span class="o">);</span>
+        <span class="n">setContentView</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">layout</span><span class="o">.</span><span class="na">activity_bottom_navigation</span><span class="o">);</span>
+        <span class="n">BottomNavigationView</span> <span class="n">navigation</span> <span class="o">=</span> <span class="o">(</span><span class="n">BottomNavigationView</span><span class="o">)</span> <span class="n">findViewById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">navigation</span><span class="o">);</span>
+        <span class="n">FragmentManager</span> <span class="n">fragmentManager</span> <span class="o">=</span> <span class="n">getSupportFragmentManager</span><span class="o">();</span>
+        <span class="n">NavHostFragment</span> <span class="n">navHostFragment</span> <span class="o">=</span> <span class="o">(</span><span class="n">NavHostFragment</span><span class="o">)</span> <span class="n">fragmentManager</span><span class="o">.</span><span class="na">findFragmentById</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">frag_nav_bottom_navigation</span><span class="o">);</span>
+        <span class="n">NavController</span> <span class="n">navController</span> <span class="o">=</span> <span class="n">navHostFragment</span><span class="o">.</span><span class="na">getNavController</span><span class="o">();</span>
+        <span class="n">NavigationUI</span><span class="o">.</span><span class="na">setupWithNavController</span><span class="o">(</span><span class="n">navigation</span><span class="o">,</span> <span class="n">navController</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">onSupportNavigateUp</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">Navigation</span><span class="o">.</span><span class="na">findNavController</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">R</span><span class="o">.</span><span class="na">id</span><span class="o">.</span><span class="na">frag_nav_bottom_navigation</span><span class="o">).</span><span class="na">navigateUp</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>这样就完了么？其实还没有，还有很重要的一步还没做，就是 BottomNavigationView 在布局中写的 menu 文件，要确保 menu 里的 item id 和 navigation 里的 fragment 的 id 要一致，不然是不起作用的，</p>
+</blockquote>
+
+<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span>
+<span class="nt">&lt;menu</span> <span class="na">xmlns:android=</span><span class="s">"http://schemas.android.com/apk/res/android"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;item</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_home"</span>
+        <span class="na">android:icon=</span><span class="s">"@drawable/ic_home_black_24dp"</span>
+        <span class="na">android:title=</span><span class="s">"@string/title_home"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;item</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_dashboard"</span>
+        <span class="na">android:icon=</span><span class="s">"@drawable/ic_dashboard_black_24dp"</span>
+        <span class="na">android:title=</span><span class="s">"@string/title_dashboard"</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;item</span>
+        <span class="na">android:id=</span><span class="s">"@+id/nav_notifications"</span>
+        <span class="na">android:icon=</span><span class="s">"@drawable/ic_notifications_black_24dp"</span>
+        <span class="na">android:title=</span><span class="s">"@string/title_notifications"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/menu&gt;</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>这回就真的完事了，运行一下看看吧<br /><br />
+<img src="/images/Android Navigation/2017-1-22230929.gif" alt="运行结果截图" /><br /><br />
+这里我们没有添加切换动画，但出来的效果却有动画，去看看 setupWithNavController(BottomNavigationView bottomNavigationView, NavController navController) 这个方法里做了什么吧，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Sets up a {@link BottomNavigationView} for use with a {@link NavController}. This will call
+ * {@link #onNavDestinationSelected(MenuItem, NavController)} when a menu item is selected. The
+ * selected item in the BottomNavigationView will automatically be updated when the destination
+ * changes.
+ *
+ * @param bottomNavigationView The BottomNavigationView that should be kept in sync with
+ *                             changes to the NavController.
+ * @param navController The NavController that supplies the primary menu.
+*                      Navigation actions on this NavController will be reflected in the
+*                      selected item in the BottomNavigationView.
+ */</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">setupWithNavController</span><span class="o">(</span>
+        <span class="nd">@NonNull</span> <span class="kd">final</span> <span class="n">BottomNavigationView</span> <span class="n">bottomNavigationView</span><span class="o">,</span>
+        <span class="nd">@NonNull</span> <span class="kd">final</span> <span class="n">NavController</span> <span class="n">navController</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">bottomNavigationView</span><span class="o">.</span><span class="na">setOnNavigationItemSelectedListener</span><span class="o">(</span>
+            <span class="k">new</span> <span class="n">BottomNavigationView</span><span class="o">.</span><span class="na">OnNavigationItemSelectedListener</span><span class="o">()</span> <span class="o">{</span>
+                <span class="nd">@Override</span>
+                <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">onNavigationItemSelected</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">MenuItem</span> <span class="n">item</span><span class="o">)</span> <span class="o">{</span>
+                    <span class="k">return</span> <span class="nf">onNavDestinationSelected</span><span class="o">(</span><span class="n">item</span><span class="o">,</span> <span class="n">navController</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">});</span>
+    <span class="n">navController</span><span class="o">.</span><span class="na">addOnNavigatedListener</span><span class="o">(</span><span class="k">new</span> <span class="n">NavController</span><span class="o">.</span><span class="na">OnNavigatedListener</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onNavigated</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">NavController</span> <span class="n">controller</span><span class="o">,</span>
+                <span class="nd">@NonNull</span> <span class="n">NavDestination</span> <span class="n">destination</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">Menu</span> <span class="n">menu</span> <span class="o">=</span> <span class="n">bottomNavigationView</span><span class="o">.</span><span class="na">getMenu</span><span class="o">();</span>
+            <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">h</span> <span class="o">=</span> <span class="mi">0</span><span class="o">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="na">size</span><span class="o">();</span> <span class="n">h</span> <span class="o">&lt;</span> <span class="n">size</span><span class="o">;</span> <span class="n">h</span><span class="o">++)</span> <span class="o">{</span>
+                <span class="n">MenuItem</span> <span class="n">item</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="na">getItem</span><span class="o">(</span><span class="n">h</span><span class="o">);</span>
+                <span class="k">if</span> <span class="o">(</span><span class="n">matchDestination</span><span class="o">(</span><span class="n">destination</span><span class="o">,</span> <span class="n">item</span><span class="o">.</span><span class="na">getItemId</span><span class="o">()))</span> <span class="o">{</span>
+                    <span class="n">item</span><span class="o">.</span><span class="na">setChecked</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+                <span class="o">}</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">});</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>首先看到的是调用了BottomNavigationView setOnNavigationItemSelectedListener() 方法，里面调用了 onNavDestinationSelected() 方法，进去看看，</p>
+</blockquote>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">private</span> <span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">onNavDestinationSelected</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">MenuItem</span> <span class="n">item</span><span class="o">,</span>
+        <span class="nd">@NonNull</span> <span class="n">NavController</span> <span class="n">navController</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">popUp</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">NavOptions</span><span class="o">.</span><span class="na">Builder</span> <span class="n">builder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NavOptions</span><span class="o">.</span><span class="na">Builder</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">setLaunchSingleTop</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">setEnterAnim</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">anim</span><span class="o">.</span><span class="na">nav_default_enter_anim</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">setExitAnim</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">anim</span><span class="o">.</span><span class="na">nav_default_exit_anim</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">setPopEnterAnim</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">anim</span><span class="o">.</span><span class="na">nav_default_pop_enter_anim</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">setPopExitAnim</span><span class="o">(</span><span class="n">R</span><span class="o">.</span><span class="na">anim</span><span class="o">.</span><span class="na">nav_default_pop_exit_anim</span><span class="o">);</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">popUp</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">builder</span><span class="o">.</span><span class="na">setPopUpTo</span><span class="o">(</span><span class="n">findStartDestination</span><span class="o">(</span><span class="n">navController</span><span class="o">.</span><span class="na">getGraph</span><span class="o">()).</span><span class="na">getId</span><span class="o">(),</span> <span class="kc">false</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="n">NavOptions</span> <span class="n">options</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="na">build</span><span class="o">();</span>
+    <span class="k">try</span> <span class="o">{</span>
+        <span class="c1">//TODO provide proper API instead of using Exceptions as Control-Flow.</span>
+        <span class="n">navController</span><span class="o">.</span><span class="na">navigate</span><span class="o">(</span><span class="n">item</span><span class="o">.</span><span class="na">getItemId</span><span class="o">(),</span> <span class="kc">null</span><span class="o">,</span> <span class="n">options</span><span class="o">);</span>
+        <span class="k">return</span> <span class="kc">true</span><span class="o">;</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="n">IllegalArgumentException</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="kc">false</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<blockquote>
+  <p>原来这里设置了进入和退出的动画，难怪切换会有动画效果，接着 navController.navigate() 这里的 id 是用的 MenuItem 的 id，所以 navigation 的 fragment 的 id 要和 menu 里 item 的 id 要一致才起作用，接着看 setupWithNavController() 方法吧，navController.addOnNavigatedListener() 这个方法眼熟吧，在 Navigation 和 Toolbar 结合那已经出现过，切换 Destination 时会去遍历 Menu item 的 id 匹配的话就设为选中，这里也再次说明 Navigation 的 fragment 的 id 要和 menu 的 item 的 id 相同。<br /><br />
+好了，关于 Navigation 的使用已经差不多了，Navigation 和 NavigationView 和 DrawerLayout 结合的操作是差不多的，就不说了。
+<br />
+ <a href="https://github.com/cekiasoo/NavigationTest">[本文项目源码]</a></p>
+</blockquote>
+
+        </article>
+        <hr>
+
+        
+        
+            
+            
+                
+                    
+                        
+                        <h2 id="similar_posts">Similar Posts</h2>
+                        <ul>
+                        
+                        <li class="relatedPost">
+                            <a href="/2018/04/03/AndroidAlertDialog/">Android 按 AlertDialog 的确定按钮对话框不关闭的方法
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/04/27/LeakcanaryForEclipse/">Android 在 Eclipse 项目中使用 Leakcanary 进行内存泄露检测
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/03/26/AndroidBluetoothAdapterStartDiscovery/">Android 6.0 BluetoothAdapter.startDiscovery()扫描不到蓝牙的问题分析及解决
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/03/05/CountDownTimer/">Android 倒计时 CountDownTimer 的使用和封装及改进
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/02/08/Android-%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%94%A8%E5%86%85%E7%BD%AE%E8%AF%AD%E8%A8%80%E5%88%87%E6%8D%A2/">Android 实现应用内置语言切换
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
+        
+        
+            </ul>
+        
+
+        <div class="post-recent">
+    <div class="pre">
+        
+        <p><strong>上一篇</strong> <a href="/2018/04/03/AndroidAlertDialog/">Android 按 AlertDialog 的确定按钮对话框不关闭的方法</a></p>
+        
+    </div>
+    <div class="nex">
+
+        
+    </div>
+</div>
+
+
+        <h2 id="comments">Comments</h2>
+        
+
+
+
+
+
+    </div>
+    <button class="anchor"><i class="fa fa-anchor"></i></button>
+    <div class="right">
+        <div class="wrap">
+
+            <!-- Content -->
+            <div class="side content">
+                <div>
+                    Content
+                </div>
+                <ul id="content-side" class="content-ul">
+                    
+                    <li><a href="#similar_posts">Similar Posts</a></li>
+                    
+                    <li><a href="#comments">Comments</a></li>
+                </ul>
+            </div>
+            <!-- 其他div框放到这里 -->
+            <!-- <div class="side">bbbb</div> -->
+        </div>
+    </div>
+</div>
+<script>
+/**
+ * target _blank
+ */
+(function() {
+    var aTags = document.querySelectorAll('article a:not([id])')
+    for (var i = 0; i < aTags.length; i++) {
+        aTags[i].setAttribute('target', '_blank')
+    }
+}());
+</script>
+<script src="/js/pageContent.js " charset="utf-8"></script>
+
+
+    <footer class="site-footer">
+
+
+    <div class="wrapper">
+
+        <p class="description">
+             来自 cekiasoo 的个人 blog！ 
+        </p>
+        <p class="contact">
+            Contact me at: 
+            <a href="https://github.com/cekiasoo" title="GitHub"><i class="fa fa-github" aria-hidden="true"></i></a>  
+            <a href="mailto:cekasoo@163.com" title="email"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>  
+            <a href="http://weibo.com/u/2064454407" title="Weibo"><i class="fa fa-weibo" aria-hidden="true"></i></a>   
+            <a href="https://twitter.com/cekiasoo" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>  
+            <a href="https://www.facebook.com/cekiasoo" title="Facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i></a>    
+        </p>
+        <p>
+            本站总访问量<span id="busuanzi_value_site_pv"></span>次，本站访客数<span id="busuanzi_value_site_uv"></span>人次，本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+        </p>
+        <p class="power">
+            <span>
+                Site powered by <a href="https://jekyllrb.com/">Jekyll</a> & <a href="https://pages.github.com/">Github Pages</a>.
+            </span>
+            <span>
+                Theme designed by <a href="https://github.com/cekiasoo">cekiasoo</a>.
+            </span>
+        </p>
+    </div>
+</footer>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <div class="back-to-top">
+    <a href="#top" data-scroll>
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    </a>
+</div>
+
+    <script src=" /js/main.js " charset="utf-8"></script>
+    <script src=" /js/smooth-scroll.min.js " charset="utf-8"></script>
+    <script type="text/javascript">
+      smoothScroll.init({
+        speed: 500, // Integer. How fast to complete the scroll in milliseconds
+        easing: 'easeInOutCubic', // Easing pattern to use
+        offset: 20, // Integer. How far to offset the scrolling anchor location in pixels
+      });
+    </script>
+    <!-- <script src=" /js/scroll.min.js " charset="utf-8"></script> -->
+  </body>
+
+</html>

@@ -5,9 +5,35 @@
     <description></description>
     <link>http://localhost:4001/</link>
     <atom:link href="http://localhost:4001/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Mon, 07 May 2018 10:19:03 +0800</pubDate>
-    <lastBuildDate>Mon, 07 May 2018 10:19:03 +0800</lastBuildDate>
+    <pubDate>Thu, 21 Jun 2018 11:26:28 +0800</pubDate>
+    <lastBuildDate>Thu, 21 Jun 2018 11:26:28 +0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
+    
+      <item>
+        <title>Android Navigation Architecture Component 使用详解</title>
+        <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#一navigation-是什么&quot; id=&quot;markdown-toc-一navigation-是什么&quot;&gt;一、Navigation 是什么&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;一navigation-是什么&quot;&gt;一、Navigation 是什么&lt;/h2&gt;
+
+&lt;blockquote&gt;
+  Navigation 是 Google 新推出的库，其作用简单的说就是用于简化界面间跳转的，Activity 和 Fragment 都可以&lt;a href=&quot;https://developer.android.google.cn/topic/libraries/architecture/navigation&quot; target=&quot;_blank&quot;&gt; [ Google Navigation 官方文档 ] &lt;a href=&quot;https://github.com/googlecodelabs/android-navigation&quot; target=&quot;_blank&quot;&gt; [ Google 官方 Navigation Samples ] &lt;a href=&quot;https://github.com/googlesamples/android-sunflower&quot;&gt;[这个也是 Google 官方用了 Navigation 的 Samples]&lt;/a&gt; 可以 checkout 下来看看，我在研究 Navigation 时也用 Navigation 随手做了小项目 &lt;a href=&quot;https://github.com/cekiasoo/CEChat&quot;&gt;[项目源码]&lt;/a&gt;。&lt;/a&gt;&lt;/a&gt;
+&lt;/blockquote&gt;
+
+</description>
+        <pubDate>Tue, 19 Jun 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4001/2018/06/19/Android-Navigation-Architecture-Component/</link>
+        <guid isPermaLink="true">http://localhost:4001/2018/06/19/Android-Navigation-Architecture-Component/</guid>
+        
+        <category>Android</category>
+        
+        <category>Navigation</category>
+        
+        
+        <category>Android开发</category>
+        
+      </item>
     
       <item>
         <title>Android 按 AlertDialog 的确定按钮对话框不关闭的方法</title>
