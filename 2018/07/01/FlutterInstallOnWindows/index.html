@@ -6,15 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Android 6.0 BluetoothAdapter.startDiscovery()扫描不到蓝牙的问题分析及解决</title>
-    <meta name="description" content="  一、问题描述一、问题描述  最近在做蓝牙相关的项目，用 BluetoothAdapter.startDiscovery() 这个方法在Android 6.0 的机子上扫描不到对设备可见的蓝牙，但在 Android 4.X 的机子却可以扫描出来。">
+    <title>Windows Flutter 开发环境搭建</title>
+    <meta name="description" content="  一、准备一、准备  首先要下载 Git， 下面提供了 下载地址和 下载链接    Git win 下载页面    Git win 64 位 2.18.0 下载链接    Git win 32 位 2.18.0 下载链接">
 
     <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="icon" href="/favicon.ico?" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://at.alicdn.com/t/font_8v3czwksspqlg14i.css">
     <link rel="stylesheet" href="/css/main.css ">
-    <link rel="canonical" href="http://localhost:4001/2017/03/26/AndroidBluetoothAdapterStartDiscovery/">
+    <link rel="canonical" href="http://localhost:4001/2018/07/01/FlutterInstallOnWindows/">
     <link rel="alternate" type="application/rss+xml" title="cekiasoo's blog" href="http://localhost:4001/feed.xml ">
 
 
@@ -106,11 +106,11 @@
 
         <div class="page clearfix" post>
     <div class="left">
-        <h1>Android 6.0 BluetoothAdapter.startDiscovery()扫描不到蓝牙的问题分析及解决</h1>
+        <h1>Windows Flutter 开发环境搭建</h1>
         <div class="label">
 
             <div class="label-card">
-                <i class="fa fa-calendar"></i>2017-03-26
+                <i class="fa fa-calendar"></i>2018-07-01
             </div>
 
             <div class="label-card">
@@ -133,7 +133,7 @@
   <i class="fa fa-th-list"></i>
   
     
-        <a href="/category/#Android开发遇到的问题" title="Category: Android开发遇到的问题" rel="category">Android开发遇到的问题</a>
+        <a href="/category/#Flutter开发" title="Category: Flutter开发" rel="category">Flutter开发</a>
     
   
 
@@ -150,11 +150,11 @@
   <i class="fa fa-tags"></i>
   
     
-        <!--a href="/tag/#Android" title="Tag: Android" rel="tag">Android</a-->
-        <a href="/tag/#Android" title="Tag: Android" rel="tag">Android</a>&nbsp;
+        <!--a href="/tag/#Flutter" title="Tag: Flutter" rel="tag">Flutter</a-->
+        <a href="/tag/#Flutter" title="Tag: Flutter" rel="tag">Flutter</a>&nbsp;
     
-        <!--a href="/tag/#Bluetooth" title="Tag: Bluetooth" rel="tag">Bluetooth</a-->
-        <a href="/tag/#Bluetooth" title="Tag: Bluetooth" rel="tag">Bluetooth</a>
+        <!--a href="/tag/#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83" title="Tag: 开发环境" rel="tag">开发环境</a-->
+        <a href="/tag/#开发环境" title="Tag: 开发环境" rel="tag">开发环境</a>
     
   
 
@@ -166,60 +166,167 @@
         <hr>
         <article itemscope itemtype="http://schema.org/BlogPosting">
         <ul id="markdown-toc">
-  <li><a href="#一问题描述" id="markdown-toc-一问题描述">一、问题描述</a></li>
-  <li><a href="#二问题分析" id="markdown-toc-二问题分析">二、问题分析</a></li>
-  <li><a href="#三问题解决" id="markdown-toc-三问题解决">三、问题解决</a></li>
+  <li><a href="#一准备" id="markdown-toc-一准备">一、准备</a></li>
+  <li><a href="#二获取-flutter" id="markdown-toc-二获取-flutter">二、获取 Flutter</a></li>
+  <li><a href="#三获取-android-studio" id="markdown-toc-三获取-android-studio">三、获取 Android Studio</a></li>
+  <li><a href="#四安装-flutter-所需的插件" id="markdown-toc-四安装-flutter-所需的插件">四、安装 Flutter 所需的插件</a></li>
+  <li><a href="#五创建项目" id="markdown-toc-五创建项目">五、创建项目</a></li>
 </ul>
 
-<h2 id="一问题描述">一、问题描述</h2>
+<h2 id="一准备">一、准备</h2>
+
 <blockquote>
-  <p>最近在做蓝牙相关的项目，用 BluetoothAdapter.startDiscovery() 这个方法在Android 6.0 的机子上扫描不到对设备可见的蓝牙，但在 Android 4.X 的机子却可以扫描出来。</p>
+  <p>首先要下载 Git， 下面提供了 下载地址和 下载链接    <br />
+<a href="https://git-scm.com/download/win">Git win 下载页面</a>    
+<a href="https://github.com/git-for-windows/git/releases/download/v2.18.0.windows.1/Git-2.18.0-64-bit.exe">Git win 64 位 2.18.0 下载链接</a>    
+<a href="https://github.com/git-for-windows/git/releases/download/v2.18.0.windows.1/Git-2.18.0-32-bit.exe">Git win 32 位 2.18.0 下载链接</a><br /></p>
 </blockquote>
 
-<h2 id="二问题分析">二、问题分析</h2>
+<h2 id="二获取-flutter">二、获取 Flutter</h2>
+
 <blockquote>
-  <p>这有可能是 Android 在 6.0 系统蓝牙方面做了修改，打开BluetoothAdapter.startDiscovery()这个方法<a href="https://developer.android.google.cn/reference/android/bluetooth/BluetoothAdapter.html#startDiscovery()">官方文档</a>，
-<img src="/images/AndroidBluetoothAdapterStartDiscovery/QQ截图20170325012531.png" alt="运行结果截图" /><br />
-可以看到这个方法需要请求 <a href="https://developer.android.google.cn/reference/android/Manifest.permission.html#BLUETOOTH_ADMIN">BLUETOOTH_ADMIN</a> 这个权限，但这个权限我已经添加了的，上面有一句话是 Register for ACTION_FOUND to be notified as remote Bluetooth devices are found. 这个 <a href="https://developer.android.google.cn/reference/android/bluetooth/BluetoothDevice.html#ACTION_FOUND">ACTION_FOUND</a> 是用于远程的蓝牙设备被发现时会发出的广播通知，点进去看看，
-<img src="/images/AndroidBluetoothAdapterStartDiscovery/QQ截图20170325013635.png" alt="运行结果截图" /><br />
-这个广播要请求两个权限，一个是 <a href="https://developer.android.google.cn/reference/android/Manifest.permission.html#BLUETOOTH">BLUETOOTH</a> ，另一个是 <a href="https://developer.android.google.cn/reference/android/Manifest.permission.html#ACCESS_COARSE_LOCATION">ACCESS_COARSE_LOCATION</a>，什么鬼，扫描蓝牙要访问位置的权限，黑人问号？？？？</p>
+  <p>打开 Git Bash， <br /></p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180626191903.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>切换到合适的位置，输入 git clone -b beta https://github.com/flutter/flutter.git 按回车 <br /></p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180626212007.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>把 Flutter 下载下来，下载完后接下来把 flutter 里的 bin 目录添加到 path 路径中去，</p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180626211549.png" alt="运行结果截图" /><br /></p>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180627004808.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>然后打开 cmd 窗口，输入 flutter doctor</p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180629114856.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>出现这样的画面是正在下载 Dart SDK</p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180629120004.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>下载完会自解压 Dart SDK 等一系列操作，耐心等待一段时间</p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180629154604.png" alt="运行结果截图" /><br /></p>
+
+<h2 id="三获取-android-studio">三、获取 Android Studio</h2>
+
+<blockquote>
+  <p>如果已有 Android Studio 跳至 四 安装插件 ，如果还没有 Android Studio 要先下载 Android Studio <br />
+<a href="https://developer.android.google.cn/studio/">Android Studio 下载页面</a><br /><a href="https://dl.google.com/dl/android/studio/install/3.1.3.0/android-studio-ide-173.4819257-windows.exe">Android Studio 64位 3.1.3 安装版下载链接</a><br />
+<a href="https://dl.google.com/dl/android/studio/ide-zips/3.1.3.0/android-studio-ide-173.4819257-windows.zip">Android Studio 64位 3.1.3 解压版下载链接</a><br />
+<a href="https://dl.google.com/dl/android/studio/ide-zips/3.1.3.0/android-studio-ide-173.4819257-windows32.zip">Android Studio 32位 3.1.3 解压版下载链接</a></p>
 </blockquote>
 
 <blockquote>
-  <p>最后在 Google 官方文档中找到一篇是关于 Android 6.0 系统的变更的文章，有一段是讲[]硬件标识符访问权](https://developer.android.google.cn/about/versions/marshmallow/android-6.0-changes.html#behavior-hardware-id)的，
-<img src="/images/AndroidBluetoothAdapterStartDiscovery/QQ截图20170325014445.png" alt="运行结果截图" /><br />
-可以看到，这是为了给用户提供更严格的数据保护的，这是怎么保护的？这。。。得去问 Google 吧。</p>
+  <p>打开 Android Studio, 如果是第一次用 Android Studio, 还要有 Android SDK，在 AS 下载或自己电脑有 Andriod SDK 的话也可以指定</p>
 </blockquote>
 
-<h2 id="三问题解决">三、问题解决</h2>
+<p><img src="/images/Flutter install on Windows/搜狗截图20180701171220.png" alt="运行结果截图" /><br /></p>
+
+<h2 id="四安装-flutter-所需的插件">四、安装 Flutter 所需的插件</h2>
 
 <blockquote>
-  <p>通过上面的分析，我们知道在 Android 6.0 的设备上扫描蓝牙除了需要</p>
+  <p>进入 Android Studio 主界面，点击 Configure -&gt; Plugins，安装插件</p>
 </blockquote>
 
-<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;uses-permission</span> <span class="na">android:name=</span><span class="s">"android.permission.BLUETOOTH"</span> <span class="nt">/&gt;</span>  
-<span class="nt">&lt;uses-permission</span> <span class="na">android:name=</span><span class="s">"android.permission.BLUETOOTH_ADMIN"</span> <span class="nt">/&gt;</span>  
-</code></pre>
-</div>
+<p><img src="/images/Flutter install on Windows/搜狗截图20180701175850.png" alt="运行结果截图" /><br /></p>
 
 <blockquote>
-  <p>这两个权限外，还需要</p>
+  <p>接着点击 Browse repositories</p>
 </blockquote>
 
-<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;uses-permission</span> <span class="na">android:name=</span><span class="s">"android.permission.ACCESS_FINE_LOCATION"</span> <span class="nt">/&gt;</span>  
-</code></pre>
-</div>
+<p><img src="/images/Flutter install on Windows/搜狗截图20180701180118.png" alt="运行结果截图" /><br /></p>
 
 <blockquote>
-  <p>或</p>
+  <p>搜索 Dart ，选择 Dart LANGUAGES 那个，点击右边的原谅色的 Install 按钮安装，因为 Flutter 是用 Dart 语言写的，所以要安装这个插件，</p>
 </blockquote>
 
-<div class="language-xml highlighter-rouge"><pre class="highlight"><code><span class="nt">&lt;uses-permission</span> <span class="na">android:name=</span><span class="s">"android.permission.ACCESS_COARSE_LOCATION"</span> <span class="nt">/&gt;</span>   
-</code></pre>
-</div>
+<p><img src="/images/Flutter install on Windows/搜狗截图20180701180154.png" alt="运行结果截图" /><br /></p>
 
 <blockquote>
-  <p>这两个其中之一，当然两个都加也行，就可以扫描出对设备可见的蓝牙了，当然还得要允许权限才行，毕竟 Android 6.0 开始加入了权限控制功能。</p>
+  <p>还要再安装个 Flutter 插件</p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180701180900.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>这两个插件安装完后点击 Restart Android Studio</p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180701181050.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>返回主界面时就会有个弹框询问是否重启激活插件，点击 Restart</p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180701181115.png" alt="运行结果截图" /><br /></p>
+
+<h2 id="五创建项目">五、创建项目</h2>
+
+<blockquote>
+  <p>重启后，看到没 ? 比之前多了个 Start a new Flutter project 这一行，激动吧</p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180701181405.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>点击 Start a new Flutter project，建一个 Flutter 项目吧，选择 Flutter Application, 点 Next</p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180701181621.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>来个 hello_flutter 吧，虽然很土，但很经典，这里的 Project name 只能是小写字母和下划线组成，再 Next</p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180701182038.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>域名和包名要修改的就修改，默认也可以，Finish</p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180701182317.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>建起来了，建起来了，再次激动一下</p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180701183326.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>手机连上电脑 或 创建个模拟器运行一下吧，在控制台用 flutter devices 命令可以查看连上的设备</p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180701192726.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>点击原谅色的三角形按钮</p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180701193538.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>忙活了大半天终于运行起来了</p>
+</blockquote>
+
+<p><img src="/images/Flutter install on Windows/搜狗截图20180701193211.png" alt="运行结果截图" /><br /></p>
+
+<blockquote>
+  <p>至此，环境搭建完毕。</p>
 </blockquote>
 
         </article>
@@ -246,18 +353,6 @@
             
                 
                     
-                        
-                        <h2 id="similar_posts">Similar Posts</h2>
-                        <ul>
-                        
-                        <li class="relatedPost">
-                            <a href="/2018/06/19/Android-Navigation-Architecture-Component/">Android Navigation Architecture Component 使用详解
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
                 
                     
                 
@@ -272,39 +367,6 @@
             
             
                 
-                    
-                        
-                        <li class="relatedPost">
-                            <a href="/2018/04/03/AndroidAlertDialog/">Android 按 AlertDialog 的确定按钮对话框不关闭的方法
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
-                
-                    
-                
-            
-                
-                    
-                
-                    
-                
-            
-        
-            
-            
-                
-                    
-                        
-                        <li class="relatedPost">
-                            <a href="/2017/04/27/LeakcanaryForEclipse/">Android 在 Eclipse 项目中使用 Leakcanary 进行内存泄露检测
-                            
-                            </a>
-                        </li>
-                        
-                        
                     
                 
                     
@@ -327,15 +389,6 @@
             
                 
                     
-                        
-                        <li class="relatedPost">
-                            <a href="/2017/03/05/CountDownTimer/">Android 倒计时 CountDownTimer 的使用和封装及改进
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
                 
                     
                 
@@ -348,21 +401,6 @@
             
         
             
-            
-                
-                    
-                        
-                        <li class="relatedPost">
-                            <a href="/2017/02/19/Android-Custom-View-SesameCredit/">Android 自定义控件 仿支付宝芝麻信用的刻度盘
-                            
-                            </a>
-                        </li>
-                        
-                        
-                    
-                
-                    
-                
             
                 
                     
@@ -381,14 +419,11 @@
             
                 
                     
-                        
-                        <li class="relatedPost">
-                            <a href="/2017/02/08/Android-%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%94%A8%E5%86%85%E7%BD%AE%E8%AF%AD%E8%A8%80%E5%88%87%E6%8D%A2/">Android 实现应用内置语言切换
-                            
-                            </a>
-                        </li>
-                        
-                        
+                
+                    
+                
+            
+                
                     
                 
                     
@@ -401,20 +436,31 @@
                 
             
         
+            
+            
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+            
         
-            </ul>
         
 
         <div class="post-recent">
     <div class="pre">
         
-        <p><strong>上一篇</strong> <a href="/2017/03/05/CountDownTimer/">Android 倒计时 CountDownTimer 的使用和封装及改进</a></p>
+        <p><strong>上一篇</strong> <a href="/2018/06/19/Android-Navigation-Architecture-Component/">Android Navigation Architecture Component 使用详解</a></p>
         
     </div>
     <div class="nex">
 
-        
-        <p><strong>下一篇</strong> <a href="/2017/04/27/LeakcanaryForEclipse/">Android 在 Eclipse 项目中使用 Leakcanary 进行内存泄露检测</a></p>
         
     </div>
 </div>
@@ -438,8 +484,6 @@
                     Content
                 </div>
                 <ul id="content-side" class="content-ul">
-                    
-                    <li><a href="#similar_posts">Similar Posts</a></li>
                     
                     <li><a href="#comments">Comments</a></li>
                 </ul>
