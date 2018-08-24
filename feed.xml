@@ -5,9 +5,39 @@
     <description></description>
     <link>http://localhost:4001/</link>
     <atom:link href="http://localhost:4001/feed.xml" rel="self" type="application/rss+xml"/>
-    <pubDate>Sun, 01 Jul 2018 22:13:35 +0800</pubDate>
-    <lastBuildDate>Sun, 01 Jul 2018 22:13:35 +0800</lastBuildDate>
+    <pubDate>Fri, 24 Aug 2018 11:14:12 +0800</pubDate>
+    <lastBuildDate>Fri, 24 Aug 2018 11:14:12 +0800</lastBuildDate>
     <generator>Jekyll v3.3.1</generator>
+    
+      <item>
+        <title>Android RecyclerView + Paging Library 添加头部刷新会自动滚动的问题分析及解决</title>
+        <description>&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#一前言&quot; id=&quot;markdown-toc-一前言&quot;&gt;一、前言&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;一前言&quot;&gt;一、前言&lt;/h3&gt;
+
+&lt;blockquote&gt;
+  最近在做一款应用，因为 api 涉及到分页的，所以选择用 RecyclerView + Paging 去做，能省去滚动到底时去处理加载数据的逻辑，Paging 会自动去加载下一页的内容，首页要做个 Banner, 所以把 Banner 作为 RecyclerView 的 头添加进去，可是添加后下面的数据加载完就会自动滚到下面去，如下图，一下拉刷新，加载完数据后就到下面去了&lt;br /&gt;
+&lt;/blockquote&gt;
+
+&lt;img src=&quot;/images/Android PagingWithHeader/2017-1-22230929.gif&quot; alt=&quot;运行结果截图&quot; /&gt;
+
+</description>
+        <pubDate>Fri, 24 Aug 2018 00:00:00 +0800</pubDate>
+        <link>http://localhost:4001/2018/08/24/PagingWithHeader/</link>
+        <guid isPermaLink="true">http://localhost:4001/2018/08/24/PagingWithHeader/</guid>
+        
+        <category>Android</category>
+        
+        <category>RecyclerView</category>
+        
+        <category>Paging</category>
+        
+        
+        <category>Android开发遇到的问题</category>
+        
+      </item>
     
       <item>
         <title>Windows Flutter 开发环境搭建</title>

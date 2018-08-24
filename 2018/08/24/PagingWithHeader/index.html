@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Android RecyclerView + Paging Library 添加头部刷新会自动滚动的问题分析及解决</title>
+    <meta name="description" content="  一、前言一、前言  最近在做一款应用，因为 api 涉及到分页的，所以选择用 RecyclerView + Paging 去做，能省去滚动到底时去处理加载数据的逻辑，Paging 会自动去加载下一页的内容，首页要做个 Banner, 所以把 Banner 作为 RecyclerView 的 头添加进去，可是添...">
+
+    <link rel="shortcut icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico?" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://at.alicdn.com/t/font_8v3czwksspqlg14i.css">
+    <link rel="stylesheet" href="/css/main.css ">
+    <link rel="canonical" href="http://localhost:4001/2018/08/24/PagingWithHeader/">
+    <link rel="alternate" type="application/rss+xml" title="cekiasoo's blog" href="http://localhost:4001/feed.xml ">
+
+
+    <script>
+    // 百度统计代码
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?44057784c9cb1a12f1f7fcb6ae5c0237";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+
+
+</head>
+
+
+  <body>
+
+    <header id="top">
+    <div class="wrapper">
+        <a href="/" class="brand">cekiasoo's blog</a>
+        <small>Android Coder</small>
+        <button id="headerMenu" class="menu"><i class="fa fa-bars"></i></button>
+        <nav id="headerNav">
+            <ul>
+                <li>
+                    
+                    <a href="/">
+                    
+                        <i class="fa fa-home"></i>Home
+                    </a>
+                </li>
+
+                
+                    
+                    <li>
+                        
+                        <a href="/archive/">
+                        
+                            <i class="fa fa-archive"></i>Archives
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/category/">
+                        
+                            <i class="fa fa-th-list"></i>Categories
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/tag/">
+                        
+                            <i class="fa fa-tags"></i>Tags
+                        </a>
+                    </li>
+                    
+                
+                    
+                    <li>
+                        
+                        <a href="/about/">
+                        
+                            <i class="fa fa-heart"></i>About
+                        </a>
+                    </li>
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+                    
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+        <div class="page clearfix" post>
+    <div class="left">
+        <h1>Android RecyclerView + Paging Library 添加头部刷新会自动滚动的问题分析及解决</h1>
+        <div class="label">
+
+            <div class="label-card">
+                <i class="fa fa-calendar"></i>2018-08-24
+            </div>
+
+            <div class="label-card">
+                <i class="fa fa-user"></i>cekiasoo
+                
+            </div>
+            <div class="label-card">
+                <p>阅读：<span id="busuanzi_value_page_pv"></span></p>
+            </div>
+            <div class="label-card">
+                
+            </div>
+
+            <div class="label-card">
+            
+
+
+<!-- <span class="point">•</span> -->
+<span class="categories">
+  <i class="fa fa-th-list"></i>
+  
+    
+        <a href="/category/#Android开发遇到的问题" title="Category: Android开发遇到的问题" rel="category">Android开发遇到的问题</a>
+    
+  
+
+  <!-- <span class="point">•</span> -->
+</span>
+
+
+            </div>
+
+            <div class="label-card">
+            
+<!-- <span class="point">•</span> -->
+<span class="pageTag">
+  <i class="fa fa-tags"></i>
+  
+    
+        <!--a href="/tag/#Android" title="Tag: Android" rel="tag">Android</a-->
+        <a href="/tag/#Android" title="Tag: Android" rel="tag">Android</a>&nbsp;
+    
+        <!--a href="/tag/#RecyclerView" title="Tag: RecyclerView" rel="tag">RecyclerView</a-->
+        <a href="/tag/#RecyclerView" title="Tag: RecyclerView" rel="tag">RecyclerView</a>&nbsp;
+    
+        <!--a href="/tag/#Paging" title="Tag: Paging" rel="tag">Paging</a-->
+        <a href="/tag/#Paging" title="Tag: Paging" rel="tag">Paging</a>
+    
+  
+
+</span>
+
+            </div>
+
+        </div>
+        <hr>
+        <article itemscope itemtype="http://schema.org/BlogPosting">
+        <ul id="markdown-toc">
+  <li><a href="#一前言" id="markdown-toc-一前言">一、前言</a></li>
+  <li><a href="#二问题分析" id="markdown-toc-二问题分析">二、问题分析</a></li>
+  <li><a href="#三问题解决" id="markdown-toc-三问题解决">三、问题解决</a></li>
+  <li><a href="#四后记" id="markdown-toc-四后记">四、后记</a></li>
+</ul>
+
+<h3 id="一前言">一、前言</h3>
+
+<blockquote>
+  <p>最近在做一款应用，因为 api 涉及到分页的，所以选择用 RecyclerView + Paging 去做，能省去滚动到底时去处理加载数据的逻辑，Paging 会自动去加载下一页的内容，首页要做个 Banner, 所以把 Banner 作为 RecyclerView 的 头添加进去，可是添加后下面的数据加载完就会自动滚到下面去，如下图，一下拉刷新，加载完数据后就到下面去了<br /></p>
+</blockquote>
+
+<p><img src="/images/Android PagingWithHeader/2017-1-22230929.gif" alt="运行结果截图" /></p>
+
+<h3 id="二问题分析">二、问题分析</h3>
+
+<p>当我去掉头部刷新，一切是正常的，</p>
+
+<p><img src="/images/Android PagingWithHeader/2018-8-23185619.gif" alt="运行结果截图" /></p>
+
+<p>所以原因应该就是添加了 Header,导致 position 不准确， RecyclerView 不知道有 Header 的存在，一刷新插入、删除等操作是从 0 开始的，但 Header 在前面霸占着位置了（陈独秀同学在前面站着不坐下），所以插入、删除等操作不要动到 Header 的位置，使其操作正确的 position, 那怎么让其不去动到 Heasder 的位置呢？只有看看源码能不能找到解决的办法了， RecyclerView + Paging Library 用的 Adapter 用的是继承 PagedListAdapter 的，</p>
+
+<p><img src="/images/Android PagingWithHeader/搜狗截图20180823191010.png" alt="运行结果截图" /></p>
+
+<p>PagedListAdapter 是使用了 DiffUtil 的，DiffUtil 里的插入、删除等操作是用到 AdapterListUpdateCallback 这个类</p>
+
+<p><img src="/images/Android PagingWithHeader/搜狗截图20180823192302.png" alt="运行结果截图" /></p>
+
+<p><img src="/images/Android PagingWithHeader/搜狗截图20180823192328.png" alt="运行结果截图" /></p>
+
+<p>AdapterListUpdateCallback 这个类里插入、删除等操作调用的是 RecyclerView.Adapter mAdapter 的，</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * ListUpdateCallback that dispatches update events to the given adapter.
+ *
+ * @see DiffUtil.DiffResult#dispatchUpdatesTo(RecyclerView.Adapter)
+ */</span>
+<span class="kd">public</span> <span class="kd">final</span> <span class="kd">class</span> <span class="nc">AdapterListUpdateCallback</span> <span class="kd">implements</span> <span class="n">ListUpdateCallback</span> <span class="o">{</span>
+    <span class="nd">@NonNull</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span> <span class="n">mAdapter</span><span class="o">;</span>
+
+    <span class="cm">/**
+     * Creates an AdapterListUpdateCallback that will dispatch update events to the given adapter.
+     *
+     * @param adapter The Adapter to send updates to.
+     */</span>
+    <span class="kd">public</span> <span class="nf">AdapterListUpdateCallback</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">Adapter</span> <span class="n">adapter</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">mAdapter</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="cm">/** {@inheritDoc} */</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onInserted</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">,</span> <span class="kt">int</span> <span class="n">count</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">mAdapter</span><span class="o">.</span><span class="na">notifyItemRangeInserted</span><span class="o">(</span><span class="n">position</span><span class="o">,</span> <span class="n">count</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="cm">/** {@inheritDoc} */</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onRemoved</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">,</span> <span class="kt">int</span> <span class="n">count</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">mAdapter</span><span class="o">.</span><span class="na">notifyItemRangeRemoved</span><span class="o">(</span><span class="n">position</span><span class="o">,</span> <span class="n">count</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="cm">/** {@inheritDoc} */</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onMoved</span><span class="o">(</span><span class="kt">int</span> <span class="n">fromPosition</span><span class="o">,</span> <span class="kt">int</span> <span class="n">toPosition</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">mAdapter</span><span class="o">.</span><span class="na">notifyItemMoved</span><span class="o">(</span><span class="n">fromPosition</span><span class="o">,</span> <span class="n">toPosition</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="cm">/** {@inheritDoc} */</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onChanged</span><span class="o">(</span><span class="kt">int</span> <span class="n">position</span><span class="o">,</span> <span class="kt">int</span> <span class="n">count</span><span class="o">,</span> <span class="n">Object</span> <span class="n">payload</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">mAdapter</span><span class="o">.</span><span class="na">notifyItemRangeChanged</span><span class="o">(</span><span class="n">position</span><span class="o">,</span> <span class="n">count</span><span class="o">,</span> <span class="n">payload</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>RecyclerView.Adapter 里用的是 mObservable 的插入、删除等操作，</p>
+
+<p><img src="/images/Android PagingWithHeader/搜狗截图20180823193403.png" alt="运行结果截图" /></p>
+
+<p>这个 mObservable 是 AdapterDataObservable 类型的，</p>
+
+<p><img src="/images/Android PagingWithHeader/搜狗截图20180823212203.png" alt="运行结果截图" /></p>
+
+<p>AdapterDataObservable 是继承 Observable 的</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">static</span> <span class="kd">class</span> <span class="nc">AdapterDataObservable</span> <span class="kd">extends</span> <span class="n">Observable</span><span class="o">&lt;</span><span class="n">AdapterDataObserver</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">hasObservers</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="o">!</span><span class="n">mObservers</span><span class="o">.</span><span class="na">isEmpty</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">notifyChanged</span><span class="o">()</span> <span class="o">{</span>
+        <span class="c1">// since onChanged() is implemented by the app, it could do anything, including</span>
+        <span class="c1">// removing itself from {@link mObservers} - and that could cause problems if</span>
+        <span class="c1">// an iterator is used on the ArrayList {@link mObservers}.</span>
+        <span class="c1">// to avoid such problems, just march thru the list in the reverse order.</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">mObservers</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">--)</span> <span class="o">{</span>
+            <span class="n">mObservers</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">).</span><span class="na">onChanged</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">notifyItemRangeChanged</span><span class="o">(</span><span class="kt">int</span> <span class="n">positionStart</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">notifyItemRangeChanged</span><span class="o">(</span><span class="n">positionStart</span><span class="o">,</span> <span class="n">itemCount</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">notifyItemRangeChanged</span><span class="o">(</span><span class="kt">int</span> <span class="n">positionStart</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">,</span>
+            <span class="nd">@Nullable</span> <span class="n">Object</span> <span class="n">payload</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// since onItemRangeChanged() is implemented by the app, it could do anything, including</span>
+        <span class="c1">// removing itself from {@link mObservers} - and that could cause problems if</span>
+        <span class="c1">// an iterator is used on the ArrayList {@link mObservers}.</span>
+        <span class="c1">// to avoid such problems, just march thru the list in the reverse order.</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">mObservers</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">--)</span> <span class="o">{</span>
+            <span class="n">mObservers</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">).</span><span class="na">onItemRangeChanged</span><span class="o">(</span><span class="n">positionStart</span><span class="o">,</span> <span class="n">itemCount</span><span class="o">,</span> <span class="n">payload</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">notifyItemRangeInserted</span><span class="o">(</span><span class="kt">int</span> <span class="n">positionStart</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// since onItemRangeInserted() is implemented by the app, it could do anything,</span>
+        <span class="c1">// including removing itself from {@link mObservers} - and that could cause problems if</span>
+        <span class="c1">// an iterator is used on the ArrayList {@link mObservers}.</span>
+        <span class="c1">// to avoid such problems, just march thru the list in the reverse order.</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">mObservers</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">--)</span> <span class="o">{</span>
+            <span class="n">mObservers</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">).</span><span class="na">onItemRangeInserted</span><span class="o">(</span><span class="n">positionStart</span><span class="o">,</span> <span class="n">itemCount</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">notifyItemRangeRemoved</span><span class="o">(</span><span class="kt">int</span> <span class="n">positionStart</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// since onItemRangeRemoved() is implemented by the app, it could do anything, including</span>
+        <span class="c1">// removing itself from {@link mObservers} - and that could cause problems if</span>
+        <span class="c1">// an iterator is used on the ArrayList {@link mObservers}.</span>
+        <span class="c1">// to avoid such problems, just march thru the list in the reverse order.</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">mObservers</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">--)</span> <span class="o">{</span>
+            <span class="n">mObservers</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">).</span><span class="na">onItemRangeRemoved</span><span class="o">(</span><span class="n">positionStart</span><span class="o">,</span> <span class="n">itemCount</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">notifyItemMoved</span><span class="o">(</span><span class="kt">int</span> <span class="n">fromPosition</span><span class="o">,</span> <span class="kt">int</span> <span class="n">toPosition</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="n">mObservers</span><span class="o">.</span><span class="na">size</span><span class="o">()</span> <span class="o">-</span> <span class="mi">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span><span class="o">--)</span> <span class="o">{</span>
+            <span class="n">mObservers</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">i</span><span class="o">).</span><span class="na">onItemRangeMoved</span><span class="o">(</span><span class="n">fromPosition</span><span class="o">,</span> <span class="n">toPosition</span><span class="o">,</span> <span class="mi">1</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>而 Observable 是个典型的观察者模式的写法</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Provides methods for registering or unregistering arbitrary observers in an {@link ArrayList}.
+ *
+ * This abstract class is intended to be subclassed and specialized to maintain
+ * a registry of observers of specific types and dispatch notifications to them.
+ *
+ * @param T The observer type.
+ */</span>
+<span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Observable</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="cm">/**
+     * The list of observers.  An observer can be in the list at most
+     * once and will never be null.
+     */</span>
+    <span class="kd">protected</span> <span class="kd">final</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">mObservers</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;();</span>
+
+    <span class="cm">/**
+     * Adds an observer to the list. The observer cannot be null and it must not already
+     * be registered.
+     * @param observer the observer to register
+     * @throws IllegalArgumentException the observer is null
+     * @throws IllegalStateException the observer is already registered
+     */</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">registerObserver</span><span class="o">(</span><span class="n">T</span> <span class="n">observer</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">observer</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"The observer is null."</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="kd">synchronized</span><span class="o">(</span><span class="n">mObservers</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">mObservers</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">observer</span><span class="o">))</span> <span class="o">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"Observer "</span> <span class="o">+</span> <span class="n">observer</span> <span class="o">+</span> <span class="s">" is already registered."</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="n">mObservers</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">observer</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * Removes a previously registered observer. The observer must not be null and it
+     * must already have been registered.
+     * @param observer the observer to unregister
+     * @throws IllegalArgumentException the observer is null
+     * @throws IllegalStateException the observer is not yet registered
+     */</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">unregisterObserver</span><span class="o">(</span><span class="n">T</span> <span class="n">observer</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">observer</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalArgumentException</span><span class="o">(</span><span class="s">"The observer is null."</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="kd">synchronized</span><span class="o">(</span><span class="n">mObservers</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">mObservers</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">observer</span><span class="o">);</span>
+            <span class="k">if</span> <span class="o">(</span><span class="n">index</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"Observer "</span> <span class="o">+</span> <span class="n">observer</span> <span class="o">+</span> <span class="s">" was not registered."</span><span class="o">);</span>
+            <span class="o">}</span>
+            <span class="n">mObservers</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="n">index</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="cm">/**
+     * Remove all registered observers.
+     */</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">unregisterAll</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kd">synchronized</span><span class="o">(</span><span class="n">mObservers</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">mObservers</span><span class="o">.</span><span class="na">clear</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>那么是谁及什么时候注册到这个 mObservers 呢？什么时候就是在 RecyclerView setAdapter 或 swapAdapter 的时候</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Swaps the current adapter with the provided one. It is similar to
+ * {@link #setAdapter(Adapter)} but assumes existing adapter and the new adapter uses the same
+ * {@link ViewHolder} and does not clear the RecycledViewPool.
+ * &lt;p&gt;
+ * Note that it still calls onAdapterChanged callbacks.
+ *
+ * @param adapter The new adapter to set, or null to set no adapter.
+ * @param removeAndRecycleExistingViews If set to true, RecyclerView will recycle all existing
+ *                                      Views. If adapters have stable ids and/or you want to
+ *                                      animate the disappearing views, you may prefer to set
+ *                                      this to false.
+ * @see #setAdapter(Adapter)
+ */</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">swapAdapter</span><span class="o">(</span><span class="n">Adapter</span> <span class="n">adapter</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">removeAndRecycleExistingViews</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// bail out if layout is frozen</span>
+    <span class="n">setLayoutFrozen</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+    <span class="n">setAdapterInternal</span><span class="o">(</span><span class="n">adapter</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="n">removeAndRecycleExistingViews</span><span class="o">);</span>
+    <span class="n">processDataSetCompletelyChanged</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+    <span class="n">requestLayout</span><span class="o">();</span>
+<span class="o">}</span>
+
+<span class="cm">/**
+ * Set a new adapter to provide child views on demand.
+ * &lt;p&gt;
+ * When adapter is changed, all existing views are recycled back to the pool. If the pool has
+ * only one adapter, it will be cleared.
+ *
+ * @param adapter The new adapter to set, or null to set no adapter.
+ * @see #swapAdapter(Adapter, boolean)
+ */</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setAdapter</span><span class="o">(</span><span class="n">Adapter</span> <span class="n">adapter</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// bail out if layout is frozen</span>
+    <span class="n">setLayoutFrozen</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+    <span class="n">setAdapterInternal</span><span class="o">(</span><span class="n">adapter</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">true</span><span class="o">);</span>
+    <span class="n">processDataSetCompletelyChanged</span><span class="o">(</span><span class="kc">false</span><span class="o">);</span>
+    <span class="n">requestLayout</span><span class="o">();</span>
+<span class="o">}</span>
+
+<span class="cm">/**
+ * Replaces the current adapter with the new one and triggers listeners.
+ * @param adapter The new adapter
+ * @param compatibleWithPrevious If true, the new adapter is using the same View Holders and
+ *                               item types with the current adapter (helps us avoid cache
+ *                               invalidation).
+ * @param removeAndRecycleViews  If true, we'll remove and recycle all existing views. If
+ *                               compatibleWithPrevious is false, this parameter is ignored.
+ */</span>
+<span class="kd">private</span> <span class="kt">void</span> <span class="nf">setAdapterInternal</span><span class="o">(</span><span class="n">Adapter</span> <span class="n">adapter</span><span class="o">,</span> <span class="kt">boolean</span> <span class="n">compatibleWithPrevious</span><span class="o">,</span>
+        <span class="kt">boolean</span> <span class="n">removeAndRecycleViews</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">mAdapter</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">mAdapter</span><span class="o">.</span><span class="na">unregisterAdapterDataObserver</span><span class="o">(</span><span class="n">mObserver</span><span class="o">);</span>
+        <span class="n">mAdapter</span><span class="o">.</span><span class="na">onDetachedFromRecyclerView</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">if</span> <span class="o">(!</span><span class="n">compatibleWithPrevious</span> <span class="o">||</span> <span class="n">removeAndRecycleViews</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">removeAndRecycleViews</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="n">mAdapterHelper</span><span class="o">.</span><span class="na">reset</span><span class="o">();</span>
+    <span class="kd">final</span> <span class="n">Adapter</span> <span class="n">oldAdapter</span> <span class="o">=</span> <span class="n">mAdapter</span><span class="o">;</span>
+    <span class="n">mAdapter</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">adapter</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">adapter</span><span class="o">.</span><span class="na">registerAdapterDataObserver</span><span class="o">(</span><span class="n">mObserver</span><span class="o">);</span>
+        <span class="n">adapter</span><span class="o">.</span><span class="na">onAttachedToRecyclerView</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">mLayout</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">mLayout</span><span class="o">.</span><span class="na">onAdapterChanged</span><span class="o">(</span><span class="n">oldAdapter</span><span class="o">,</span> <span class="n">mAdapter</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="n">mRecycler</span><span class="o">.</span><span class="na">onAdapterChanged</span><span class="o">(</span><span class="n">oldAdapter</span><span class="o">,</span> <span class="n">mAdapter</span><span class="o">,</span> <span class="n">compatibleWithPrevious</span><span class="o">);</span>
+    <span class="n">mState</span><span class="o">.</span><span class="na">mStructureChanged</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Adapter 的 registerAdapterDataObserver 方法</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Register a new observer to listen for data changes.
+ *
+ * &lt;p&gt;The adapter may publish a variety of events describing specific changes.
+ * Not all adapters may support all change types and some may fall back to a generic
+ * {@link android.support.v7.widget.RecyclerView.AdapterDataObserver#onChanged()
+ * "something changed"} event if more specific data is not available.&lt;/p&gt;
+ *
+ * &lt;p&gt;Components registering observers with an adapter are responsible for
+ * {@link #unregisterAdapterDataObserver(RecyclerView.AdapterDataObserver)
+ * unregistering} those observers when finished.&lt;/p&gt;
+ *
+ * @param observer Observer to register
+ *
+ * @see #unregisterAdapterDataObserver(RecyclerView.AdapterDataObserver)
+ */</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">registerAdapterDataObserver</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">AdapterDataObserver</span> <span class="n">observer</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">mObservable</span><span class="o">.</span><span class="na">registerObserver</span><span class="o">(</span><span class="n">observer</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>那 adapter.registerAdapterDataObserver(mObserver) 这句中的 mObserver 是谁？</p>
+
+<p><img src="/images/Android PagingWithHeader/搜狗截图20180823213930.png" alt="运行结果截图" /></p>
+
+<p>原来 mObserver 是 RecyclerViewDataObserver 类型的</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">private</span> <span class="kd">class</span> <span class="nc">RecyclerViewDataObserver</span> <span class="kd">extends</span> <span class="n">AdapterDataObserver</span> <span class="o">{</span>
+    <span class="n">RecyclerViewDataObserver</span><span class="o">()</span> <span class="o">{</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onChanged</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">assertNotInLayoutOrScroll</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+        <span class="n">mState</span><span class="o">.</span><span class="na">mStructureChanged</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="n">processDataSetCompletelyChanged</span><span class="o">(</span><span class="kc">true</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">mAdapterHelper</span><span class="o">.</span><span class="na">hasPendingUpdates</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">requestLayout</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemRangeChanged</span><span class="o">(</span><span class="kt">int</span> <span class="n">positionStart</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">,</span> <span class="n">Object</span> <span class="n">payload</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">assertNotInLayoutOrScroll</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">mAdapterHelper</span><span class="o">.</span><span class="na">onItemRangeChanged</span><span class="o">(</span><span class="n">positionStart</span><span class="o">,</span> <span class="n">itemCount</span><span class="o">,</span> <span class="n">payload</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">triggerUpdateProcessor</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemRangeInserted</span><span class="o">(</span><span class="kt">int</span> <span class="n">positionStart</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">assertNotInLayoutOrScroll</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">mAdapterHelper</span><span class="o">.</span><span class="na">onItemRangeInserted</span><span class="o">(</span><span class="n">positionStart</span><span class="o">,</span> <span class="n">itemCount</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">triggerUpdateProcessor</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemRangeRemoved</span><span class="o">(</span><span class="kt">int</span> <span class="n">positionStart</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">assertNotInLayoutOrScroll</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">mAdapterHelper</span><span class="o">.</span><span class="na">onItemRangeRemoved</span><span class="o">(</span><span class="n">positionStart</span><span class="o">,</span> <span class="n">itemCount</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">triggerUpdateProcessor</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemRangeMoved</span><span class="o">(</span><span class="kt">int</span> <span class="n">fromPosition</span><span class="o">,</span> <span class="kt">int</span> <span class="n">toPosition</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">assertNotInLayoutOrScroll</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">mAdapterHelper</span><span class="o">.</span><span class="na">onItemRangeMoved</span><span class="o">(</span><span class="n">fromPosition</span><span class="o">,</span> <span class="n">toPosition</span><span class="o">,</span> <span class="n">itemCount</span><span class="o">))</span> <span class="o">{</span>
+            <span class="n">triggerUpdateProcessor</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+    <span class="kt">void</span> <span class="nf">triggerUpdateProcessor</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">POST_UPDATES_ON_ANIMATION</span> <span class="o">&amp;&amp;</span> <span class="n">mHasFixedSize</span> <span class="o">&amp;&amp;</span> <span class="n">mIsAttached</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">ViewCompat</span><span class="o">.</span><span class="na">postOnAnimation</span><span class="o">(</span><span class="n">RecyclerView</span><span class="o">.</span><span class="na">this</span><span class="o">,</span> <span class="n">mUpdateChildViewsRunnable</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">mAdapterUpdateDuringMeasure</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+            <span class="n">requestLayout</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>RecyclerViewDataObserver 是继承 AdapterDataObserver</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="cm">/**
+ * Observer base class for watching changes to an {@link Adapter}.
+ * See {@link Adapter#registerAdapterDataObserver(AdapterDataObserver)}.
+ */</span>
+<span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">AdapterDataObserver</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onChanged</span><span class="o">()</span> <span class="o">{</span>
+        <span class="c1">// Do nothing</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemRangeChanged</span><span class="o">(</span><span class="kt">int</span> <span class="n">positionStart</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// do nothing</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemRangeChanged</span><span class="o">(</span><span class="kt">int</span> <span class="n">positionStart</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Object</span> <span class="n">payload</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// fallback to onItemRangeChanged(positionStart, itemCount) if app</span>
+        <span class="c1">// does not override this method.</span>
+        <span class="n">onItemRangeChanged</span><span class="o">(</span><span class="n">positionStart</span><span class="o">,</span> <span class="n">itemCount</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemRangeInserted</span><span class="o">(</span><span class="kt">int</span> <span class="n">positionStart</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// do nothing</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemRangeRemoved</span><span class="o">(</span><span class="kt">int</span> <span class="n">positionStart</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// do nothing</span>
+    <span class="o">}</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemRangeMoved</span><span class="o">(</span><span class="kt">int</span> <span class="n">fromPosition</span><span class="o">,</span> <span class="kt">int</span> <span class="n">toPosition</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// do nothing</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>RecyclerViewDataObserver  里用的是 mAdapterHelper 的插入、删除等操作，mAdapterHelper 是 AdapterHelper 类型的</p>
+
+<p><img src="/images/Android PagingWithHeader/搜狗截图20180824101035.png" alt="运行结果截图" /></p>
+
+<p>AdapterHelper 是包访问权限的</p>
+
+<p><img src="/images/Android PagingWithHeader/搜狗截图20180824101443.png" alt="运行结果截图" /></p>
+
+<p>突破口在 Adapter 的 registerAdapterDataObserver 方法，这个方法是 public 的且不是 final 的，我们可以在自己的 Adapter 覆盖 registerAdapterDataObserver 这个方法，由于 RecyclerViewDataObserver 这个类是 private 的，但 AdapterDataObserver 是 public 的，而且 registerAdapterDataObserver  要的是 AdapterDataObserver  类型的参数，我们可以写个类继承 AdapterDataObserver, 把传进 registerAdapterDataObserver 的 observer 参数和 Header 的个数传进去，在对目标 AdapterDataObserver 操作之前进行偷梁换柱，把 Header 的个数加进去，分析到这里问题就已经可以解决了。</p>
+
+<h3 id="三问题解决">三、问题解决</h3>
+
+<p>写个 AdapterDataObserverProxy 类继承 RecyclerView.AdapterDataObserver</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">AdapterDataObserverProxy</span> <span class="kd">extends</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">AdapterDataObserver</span> <span class="o">{</span>
+    <span class="n">RecyclerView</span><span class="o">.</span><span class="na">AdapterDataObserver</span> <span class="n">adapterDataObserver</span><span class="o">;</span>
+    <span class="kt">int</span> <span class="n">headerCount</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nf">ArticleDataObserver</span><span class="o">(</span><span class="n">RecyclerView</span><span class="o">.</span><span class="na">AdapterDataObserver</span> <span class="n">adapterDataObserver</span><span class="o">,</span> <span class="kt">int</span> <span class="n">headerCount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">adapterDataObserver</span> <span class="o">=</span> <span class="n">adapterDataObserver</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">headerCount</span> <span class="o">=</span> <span class="n">headerCount</span><span class="o">;</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onChanged</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">adapterDataObserver</span><span class="o">.</span><span class="na">onChanged</span><span class="o">();</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemRangeChanged</span><span class="o">(</span><span class="kt">int</span> <span class="n">positionStart</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">adapterDataObserver</span><span class="o">.</span><span class="na">onItemRangeChanged</span><span class="o">(</span><span class="n">positionStart</span> <span class="o">+</span> <span class="n">headerCount</span><span class="o">,</span> <span class="n">itemCount</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemRangeChanged</span><span class="o">(</span><span class="kt">int</span> <span class="n">positionStart</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">,</span> <span class="nd">@Nullable</span> <span class="n">Object</span> <span class="n">payload</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">adapterDataObserver</span><span class="o">.</span><span class="na">onItemRangeChanged</span><span class="o">(</span><span class="n">positionStart</span> <span class="o">+</span> <span class="n">headerCount</span><span class="o">,</span> <span class="n">itemCount</span><span class="o">,</span> <span class="n">payload</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemRangeInserted</span><span class="o">(</span><span class="kt">int</span> <span class="n">positionStart</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">adapterDataObserver</span><span class="o">.</span><span class="na">onItemRangeInserted</span><span class="o">(</span><span class="n">positionStart</span> <span class="o">+</span> <span class="n">headerCount</span><span class="o">,</span> <span class="n">itemCount</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemRangeRemoved</span><span class="o">(</span><span class="kt">int</span> <span class="n">positionStart</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">adapterDataObserver</span><span class="o">.</span><span class="na">onItemRangeRemoved</span><span class="o">(</span><span class="n">positionStart</span> <span class="o">+</span> <span class="n">headerCount</span><span class="o">,</span> <span class="n">itemCount</span><span class="o">);</span>
+    <span class="o">}</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onItemRangeMoved</span><span class="o">(</span><span class="kt">int</span> <span class="n">fromPosition</span><span class="o">,</span> <span class="kt">int</span> <span class="n">toPosition</span><span class="o">,</span> <span class="kt">int</span> <span class="n">itemCount</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">.</span><span class="na">onItemRangeMoved</span><span class="o">(</span><span class="n">fromPosition</span> <span class="o">+</span> <span class="n">headerCount</span><span class="o">,</span> <span class="n">toPosition</span> <span class="o">+</span> <span class="n">headerCount</span><span class="o">,</span> <span class="n">itemCount</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>因为 registerAdapterDataObserver 是针对 AdapterDataObserver 进行处理的，所以这里用 AdapterDataObserverProxy 去做代理，在操作真正的 AdapterDataObserver 之前把 Header 的个数加进去，所以覆盖后的 registerAdapterDataObserver 就可以这样写，</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">registerAdapterDataObserver</span><span class="o">(</span><span class="nd">@NonNull</span> <span class="n">RecyclerView</span><span class="o">.</span><span class="na">AdapterDataObserver</span> <span class="n">observer</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">super</span><span class="o">.</span><span class="na">registerAdapterDataObserver</span><span class="o">(</span><span class="k">new</span> <span class="n">AdapterDataObserverProxy</span><span class="o">(</span><span class="n">observer</span><span class="o">,</span> <span class="n">getHeaderCount</span><span class="o">()));</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>getHeaderCount() 是 Header 的个数，具体怎么写就看自己的情况了，当然覆盖后的 registerAdapterDataObserver 这样写的话就要在 RecyclerView setAdapter 之前先把 Header 添加到 Adapter 去，毕竟 registerAdapterDataObserver 是在 setAdapter 里调用的。</p>
+
+<p><img src="/images/Android PagingWithHeader/2018-8-23185621.gif" alt="运行结果截图" /></p>
+
+<h3 id="四后记">四、后记</h3>
+<blockquote>
+  <p>RecyclerView + Paging Library 用于做分页虽然好，但还是有很多坑的，现在还有坑没填，用了 RecyclerView + Paging Library 想做个添加 item 和删除 item 的功能还没有头绪，PagedList 虽然继承 AbstractList，但 add 和 remove 方法没有去实现，调用会出现 UnsupportedOperationException。</p>
+</blockquote>
+
+        </article>
+        <hr>
+
+        
+        
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                        
+                        <h2 id="similar_posts">Similar Posts</h2>
+                        <ul>
+                        
+                        <li class="relatedPost">
+                            <a href="/2018/06/19/Android-Navigation-Architecture-Component/">Android Navigation Architecture Component 使用详解
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/2018/04/03/AndroidAlertDialog/">Android 按 AlertDialog 的确定按钮对话框不关闭的方法
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/04/27/LeakcanaryForEclipse/">Android 在 Eclipse 项目中使用 Leakcanary 进行内存泄露检测
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/03/26/AndroidBluetoothAdapterStartDiscovery/">Android 6.0 BluetoothAdapter.startDiscovery()扫描不到蓝牙的问题分析及解决
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/03/05/CountDownTimer/">Android 倒计时 CountDownTimer 的使用和封装及改进
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                        
+                        <li class="relatedPost">
+                            <a href="/2017/02/19/Android-Custom-View-SesameCredit/">Android 自定义控件 仿支付宝芝麻信用的刻度盘
+                            
+                            </a>
+                        </li>
+                        
+                        
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+        
+            
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+                
+                    
+                
+                    
+                
+                    
+                
+            
+        
+        
+            </ul>
+        
+
+        <div class="post-recent">
+    <div class="pre">
+        
+        <p><strong>上一篇</strong> <a href="/2018/07/01/FlutterInstallOnWindows/">Windows Flutter 开发环境搭建</a></p>
+        
+    </div>
+    <div class="nex">
+
+        
+    </div>
+</div>
+
+
+        <h2 id="comments">Comments</h2>
+        
+
+
+
+
+
+    </div>
+    <button class="anchor"><i class="fa fa-anchor"></i></button>
+    <div class="right">
+        <div class="wrap">
+
+            <!-- Content -->
+            <div class="side content">
+                <div>
+                    Content
+                </div>
+                <ul id="content-side" class="content-ul">
+                    
+                    <li><a href="#similar_posts">Similar Posts</a></li>
+                    
+                    <li><a href="#comments">Comments</a></li>
+                </ul>
+            </div>
+            <!-- 其他div框放到这里 -->
+            <!-- <div class="side">bbbb</div> -->
+        </div>
+    </div>
+</div>
+<script>
+/**
+ * target _blank
+ */
+(function() {
+    var aTags = document.querySelectorAll('article a:not([id])')
+    for (var i = 0; i < aTags.length; i++) {
+        aTags[i].setAttribute('target', '_blank')
+    }
+}());
+</script>
+<script src="/js/pageContent.js " charset="utf-8"></script>
+
+
+    <footer class="site-footer">
+
+
+    <div class="wrapper">
+
+        <p class="description">
+             来自 cekiasoo 的个人 blog！ 
+        </p>
+        <p class="contact">
+            Contact me at: 
+            <a href="https://github.com/cekiasoo" title="GitHub"><i class="fa fa-github" aria-hidden="true"></i></a>  
+            <a href="mailto:cekasoo@163.com" title="email"><i class="fa fa-envelope-o" aria-hidden="true"></i></a>  
+            <a href="http://weibo.com/u/2064454407" title="Weibo"><i class="fa fa-weibo" aria-hidden="true"></i></a>   
+            <a href="https://twitter.com/cekiasoo" title="Twitter"><i class="fa fa-twitter" aria-hidden="true"></i></a>  
+            <a href="https://www.facebook.com/cekiasoo" title="Facebook"><i class="fa fa-facebook-official" aria-hidden="true"></i></a>    
+        </p>
+        <p>
+            本站总访问量<span id="busuanzi_value_site_pv"></span>次，本站访客数<span id="busuanzi_value_site_uv"></span>人次，本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+        </p>
+        <p class="power">
+            <span>
+                Site powered by <a href="https://jekyllrb.com/">Jekyll</a> & <a href="https://pages.github.com/">Github Pages</a>.
+            </span>
+            <span>
+                Theme designed by <a href="https://github.com/cekiasoo">cekiasoo</a>.
+            </span>
+        </p>
+    </div>
+</footer>
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+    <div class="back-to-top">
+    <a href="#top" data-scroll>
+        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+    </a>
+</div>
+
+    <script src=" /js/main.js " charset="utf-8"></script>
+    <script src=" /js/smooth-scroll.min.js " charset="utf-8"></script>
+    <script type="text/javascript">
+      smoothScroll.init({
+        speed: 500, // Integer. How fast to complete the scroll in milliseconds
+        easing: 'easeInOutCubic', // Easing pattern to use
+        offset: 20, // Integer. How far to offset the scrolling anchor location in pixels
+      });
+    </script>
+    <!-- <script src=" /js/scroll.min.js " charset="utf-8"></script> -->
+  </body>
+
+</html>
